@@ -34,6 +34,7 @@ getUserLocation() async {
 }
 
 getUserAddressFromCoordinates(double latitude, double longitude) async{
+  //This method will get lat and lon as parameters and returns the human readable address.
   final coordinates = new Coordinates(
       latitude, longitude);
   var addresses = await Geocoder.local.findAddressesFromCoordinates(

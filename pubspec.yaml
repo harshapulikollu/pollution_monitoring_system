@@ -32,6 +32,7 @@ dependencies:
   location:
   geocoder:
   firebase_messaging:
+  url_launcher:
 
 
 dev_dependencies:

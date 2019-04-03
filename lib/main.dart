@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:pollution_monitoring_system/pages/about_page.dart';
 import 'package:pollution_monitoring_system/util/location/location.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        primaryColor: Colors.white
       ),
       home: MyHomePage(title: 'Pollution monitoring app'),
     );
@@ -73,22 +75,39 @@ class _MyHomePageState extends State<MyHomePage> {
     // This method is rerun every time setState is called.
   print('line 93 ${_markers.length}');
     return Scaffold(
-      body: SlidingUpPanel(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24.0),
-          topRight: Radius.circular(24.0),
-        ),
-        body: GoogleMap(
-          onMapCreated: _onMapCreated,
-          mapType: _currentMapType,
-          markers: _markers,
-          initialCameraPosition: CameraPosition(
-            target: LatLng(20.5937, 78.9629),
-            zoom: 5.0,
-          )),
-        panel: _getFullDetailsSheet(context),
-        collapsed: _getCollapsedDetailsSheet(context),
-        controller: _bottomSheetController,
+      body: Stack(
+        children: <Widget>[
+          SlidingUpPanel(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24.0),
+              topRight: Radius.circular(24.0),
+            ),
+            body: GoogleMap(
+                onMapCreated: _onMapCreated,
+                mapType: _currentMapType,
+                markers: _markers,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(20.5937, 78.9629),
+                  zoom: 5.0,
+                )),
+            panel: _getFullDetailsSheet(context),
+            collapsed: _getCollapsedDetailsSheet(context),
+            controller: _bottomSheetController,
+          ),
+          Padding(padding: EdgeInsets.only(right: 15.0,top: 40.0),
+          child: Align(
+            alignment: Alignment.topRight,
+            child: GestureDetector(
+              child: Icon(Icons.info,
+                color: _currentMapType == MapType.normal ? Colors.black : Colors.white,),
+                onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
+                  return AboutPage();
+                }));
+                },
+            )
+          ),)
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -133,11 +152,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
  Widget _getFullDetailsSheet(BuildContext context) {
     //This method shows the details of the data from that location when sheet is open
-
-    return  Column(
-      children: <Widget>[
-        Text('hi')
-      ],
+    return  SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Icon(Icons.keyboard_arrow_down),
+          ListTile(
+              title: selectedLocationAddress == null ? Text('Getting data..') : getSelectedLocationName(collapsed: false),
+              subtitle: Text('${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...': selectedMarketLongitude}',
+                style: TextStyle(color: Colors.black),)
+          ),
+          //TODO: show all the related to this location.
+        ],
+      ),
     );
   }
 
@@ -158,11 +184,8 @@ class _MyHomePageState extends State<MyHomePage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Icon(Icons.keyboard_arrow_up,color: Colors.white,),
-//          getSelectedLocationName(),
-//          Text('${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...': selectedMarketLongitude}',
-//          style: TextStyle(color: Colors.white),)
         ListTile(
-          title: selectedLocationAddress == null ? Text('Getting data..') : getSelectedLocationName(),
+          title: selectedLocationAddress == null ? Text('Getting data..') : getSelectedLocationName(collapsed: true),
           subtitle: Text('${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...': selectedMarketLongitude}',
           style: TextStyle(color: Colors.white),)
         )
@@ -171,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget getSelectedLocationName() {
+  Widget getSelectedLocationName({bool collapsed}) {
     //This method returns the Text widget which shows the location name of that marker
     String locationName;
     if(selectedLocationAddress.addressLine == null){
@@ -201,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print('LocalityName - addressline');
     }
    return Text(selectedLocationAddress == null ? 'Getting data..' : locationName,
-      style: TextStyle(color: Colors.white,
+      style: TextStyle(color: collapsed ? Colors.white : Colors.black,
           fontSize: 20.0,
           fontWeight: FontWeight.bold),);
   }
@@ -214,7 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _addMarkerOnMap(double latitude, double longitude, {bool userLocation}) {
-    //This method will add marker onto Map everytime when we call it.
+    //This method will add marker onto Map every time when we call it.
      LatLng _latLan =  LatLng(latitude, latitude);
      //this is as of now once we get the real data we will remove the second one
     //first marker is user's device GPS location
@@ -244,7 +267,6 @@ class _MyHomePageState extends State<MyHomePage> {
     selectedLocationAddress = null;
     setState(() {
       //This setState method is called when we have refresh/render UI to show new changes made into UI
-      print('line 136 $latitude, - $longitude, ${selectedMarkerAddress[2]}');
       selectedMarkerLatitude = latitude;
       selectedMarketLongitude = longitude;
       selectedLocationAddress = selectedMarkerAddress[2];
