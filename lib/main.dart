@@ -128,7 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
       selectedLocationAddress = userLocationData[2];
     });
     _gotoUserLocation(userLatitude, userLongitude);
-    _addMarkerOnMap(latitude, longitude);
+    _addMarkerOnMap(latitude, longitude, userLocation: true);
   }
 
  Widget _getFullDetailsSheet(BuildContext context) {
@@ -145,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
     //This method shows the details of the data from that location when sheet is not open
 
     return  Container(
-      padding: EdgeInsets.all(20.0),
+      //padding: EdgeInsets.all(20.0),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
           color: Colors.blueGrey,
@@ -158,15 +158,21 @@ class _MyHomePageState extends State<MyHomePage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Icon(Icons.keyboard_arrow_up,color: Colors.white,),
-          getSelectedLocationName(),
-          Text('${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...': selectedMarketLongitude}',
+//          getSelectedLocationName(),
+//          Text('${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...': selectedMarketLongitude}',
+//          style: TextStyle(color: Colors.white),)
+        ListTile(
+          title: selectedLocationAddress == null ? Text('Getting data..') : getSelectedLocationName(),
+          subtitle: Text('${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...': selectedMarketLongitude}',
           style: TextStyle(color: Colors.white),)
+        )
         ],
       ),
     );
   }
 
   Widget getSelectedLocationName() {
+    //This method returns the Text widget which shows the location name of that marker
     String locationName;
     if(selectedLocationAddress.addressLine == null){
       if(selectedLocationAddress.subLocality == null){
@@ -202,29 +208,31 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _gotoUserLocation(double userLatitude, double userLongitude) async{
     //after getting the location data now we move to user(device) location.
-    print('line 154 came here $userLongitude, $userLongitude');
     final GoogleMapController _controller = await _mapController.future;
     _controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(userLatitude, userLongitude),
     zoom: 12.0)));
   }
 
-  void _addMarkerOnMap(double latitude, double longitude) {
-    print('line 196 came here $latitude, $longitude');
+  void _addMarkerOnMap(double latitude, double longitude, {bool userLocation}) {
+    //This method will add marker onto Map everytime when we call it.
      LatLng _latLan =  LatLng(latitude, latitude);
+     //this is as of now once we get the real data we will remove the second one
     //first marker is user's device GPS location
     _markers.add(Marker(markerId: MarkerId(_latLan.toString()),
       position: LatLng(latitude, longitude),
       onTap: (){
         getLocationDetailsOfCoordinates(latitude, longitude);
       },
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),));
+      icon: BitmapDescriptor.defaultMarkerWithHue(userLocation ? BitmapDescriptor.hueViolet : BitmapDescriptor.hueRed),));
     //added smaple checking data
+     // TODO: will remove this marker once we get real Data from Database.
     _markers.add(Marker(markerId: MarkerId('jdkddf'),
       position: LatLng(31.2536, 75.7037),
       onTap: (){
           getLocationDetailsOfCoordinates(31.2536, 75.7037);
       },
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),));
+
      setState(() {
      });
 

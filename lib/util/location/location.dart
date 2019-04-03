@@ -4,7 +4,7 @@ import 'package:location/location.dart';
 
 getUserLocation() async {
   //This method will track the current location of device(user) in lat and long then,
-  //using geocoder by passing lat and long to it, we will get the human readable address.
+  //using geoCoder by passing lat and long to it, we will get the human readable address.
   //we will return an array which carries lat, long and user address
 
   LocationData myLocation;
@@ -39,7 +39,5 @@ getUserAddressFromCoordinates(double latitude, double longitude) async{
   var addresses = await Geocoder.local.findAddressesFromCoordinates(
       coordinates);
   Address userLocation = addresses.first;
-  print('line 30 ${userLocation.locality}, ${userLocation.adminArea},${userLocation.subLocality}, ${userLocation.subAdminArea},${userLocation.addressLine}, ${userLocation.featureName},${userLocation.thoroughfare}, ${userLocation.subThoroughfare}');
-  print('line 31 in location ${latitude} , ${longitude} ');
   return [latitude, longitude, userLocation];
 }
