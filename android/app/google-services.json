@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "255888462149",
+    "firebase_url": "https://lpucasptone.firebaseio.com",
+    "project_id": "lpucasptone",
+    "storage_bucket": "lpucasptone.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255888462149:android:dd36ffa383280c14",
+        "android_client_info": {
+          "package_name": "lpucapstone.pollution_monitoring_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuG2bdgEuCo9yqA21bp3u0I858_kIcz1k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "255888462149-jk7r8nf05cdcf0ecsa9fjlhof0kv036e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
