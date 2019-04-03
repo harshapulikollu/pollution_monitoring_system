@@ -32,3 +32,14 @@ getUserLocation() async {
   print('line 31 in location ${myLocation.latitude} , ${myLocation.longitude} ');
   return [myLocation.latitude, myLocation.longitude, userLocation];
 }
+
+getUserAddressFromCoordinates(double latitude, double longitude) async{
+  final coordinates = new Coordinates(
+      latitude, longitude);
+  var addresses = await Geocoder.local.findAddressesFromCoordinates(
+      coordinates);
+  Address userLocation = addresses.first;
+  print('line 30 ${userLocation.locality}, ${userLocation.adminArea},${userLocation.subLocality}, ${userLocation.subAdminArea},${userLocation.addressLine}, ${userLocation.featureName},${userLocation.thoroughfare}, ${userLocation.subThoroughfare}');
+  print('line 31 in location ${latitude} , ${longitude} ');
+  return [latitude, longitude, userLocation];
+}
