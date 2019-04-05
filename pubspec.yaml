@@ -31,6 +31,7 @@ dependencies:
   google_maps_flutter:
   location:
   geocoder:
+  cloud_firestore:
   firebase_messaging:
   url_launcher:
 
