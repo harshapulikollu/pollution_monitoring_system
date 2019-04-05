@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
      locDocs.documents.forEach((docSnapshot){
        String locDocIDName = docSnapshot.documentID;
        List<String> locDocIDNameSplit = locDocIDName.split('&');
-       _addMarkerOnMap(double.tryParse(locDocIDNameSplit[0]), double.tryParse(locDocIDNameSplit[1]));
+       _addMarkerOnMap(double.tryParse(locDocIDNameSplit[0]), double.tryParse(locDocIDNameSplit[1]),userLocation: false);
      });
    });
   }
@@ -142,7 +142,12 @@ class _MyHomePageState extends State<MyHomePage> {
     return  SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          Icon(Icons.keyboard_arrow_down),
+          GestureDetector(
+            onTap: (){
+              _bottomSheetController.close();
+            },
+            child: Icon(Icons.keyboard_arrow_down),
+          ),
           ListTile(
               title: selectedLocationAddress == null ? Text('Getting data..') : getSelectedLocationName(collapsed: false),
               subtitle: Text('${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...': selectedMarketLongitude}',
@@ -170,7 +175,12 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Icon(Icons.keyboard_arrow_up,color: Colors.white,),
+          GestureDetector(
+            onTap: (){
+              _bottomSheetController.open();
+            },
+            child: Icon(Icons.keyboard_arrow_up,color: Colors.white,),
+          ),
           ListTile(
               title: selectedLocationAddress == null ? Text('Getting data..') : getSelectedLocationName(collapsed: true),
               subtitle: Text('${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...': selectedMarketLongitude}',
