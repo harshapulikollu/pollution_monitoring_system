@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -37,6 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   MapType _currentMapType = MapType.normal;
   final Set<Marker> _markers = {};
 
+  FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
 
   PanelController _bottomSheetController = new PanelController();
 
@@ -105,6 +108,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     initPlatformState();
     getMarkersFromDB();
+    setUpPushNotifications();
   }
 
   void initPlatformState() async {
@@ -127,8 +131,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _addMarkerOnMap(latitude, longitude, userLocation: true);
   }
 
-  void getMarkersFromDB() {
-   Firestore.instance.collection('sensorData').snapshots().listen((locDocs){
+  void getMarkersFromDB() async{
+   Firestore.instance.collection('locationMarkers').snapshots().listen((locDocs){
      locDocs.documents.forEach((docSnapshot){
        String locDocIDName = docSnapshot.documentID;
        List<String> locDocIDNameSplit = locDocIDName.split('&');
@@ -269,6 +273,28 @@ class _MyHomePageState extends State<MyHomePage> {
       selectedLocationAddress = selectedMarkerAddress[2];
     });
   }
+
+  void setUpPushNotifications() {
+    if (Platform.isAndroid) {
+      _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          //Triggers when app is in foreground and notification arrives
+          //TODO: add local notification here
+          print('line 280 $message');
+        },
+        onResume: (Map<String, dynamic> message) async {
+          //Automatically notification will show up in the try.
+          print('line 284 $message');
+        },
+        onLaunch: (Map<String, dynamic> message) async {
+          //Automatically notification will show up in the try.
+          print(' line 287 $message');
+        },
+      );
+    }
+    _firebaseMessaging.subscribeToTopic('appNotification');
+  }
+
 
 
 }

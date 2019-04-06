@@ -12,16 +12,31 @@ var db = admin.firestore();
 //start of Http request trigger. This will invoke every time when this URL called.
 exports.saveSensorDataToDB = functions.https.onRequest((request, response) => {
     //Getting values from the QueryString in URL.
-   const latitude = String(request.query.latitude);
-   const longitude = String(request.query.longitude);
+   const latitude = parseFloat(request.query.latitude);
+   const longitude = parseFloat(request.query.longitude);
    const timestamp = String(request.query.timestamp);
-   //TODO: Add rest of sensors values to resp. variables from queryString here.
+   const airQuality = parseFloat(request.query.airQuality);
+   const lpg = parseFloat(request.query.lpg);
+   const turbidity = parseFloat(request.query.turbidity);
+   const ph = parseFloat(request.query.ph);
+   const temperature = parseFloat(request.query.temperature);
+   const humidity = parseFloat(request.query.humidity);
+   const noise = parseFloat(request.query.noise);
+
+   //TODO: Add/edit rest of sensors values to resp. variables from queryString here.
     // After getting values from queryString we will create a 'data' variable with all the keys and their resp. values.
     var data = {
         'latitude': latitude,
         'longitude': longitude,
         'timestamp': timestamp,
-        //TODO: Add rest of sensor data here
+        'airQuality': airQuality,
+        'lpg': lpg,
+        'turbidity': turbidity,
+        'ph': ph,
+        'temperature': temperature,
+        'humidity': humidity,
+        'noise': noise,
+        //TODO: Add/edit sensor name/values data here
     };
     //After creating 'data' variable we will upload into the database.
     db.collection('sensorData').doc(latitude+'&'+longitude).collection('data').doc(timestamp).set(data).then(function() {
@@ -35,4 +50,54 @@ exports.saveSensorDataToDB = functions.https.onRequest((request, response) => {
         response.status(500).send('Error occurred while adding data into database with following error: '+error);
     });
 //end of Http request.
+});
+
+exports.sendNotification = functions.firestore.document('sensorData/{locDoc}/data/{timestamp}').onCreate((snapshot, context) => {
+   const documentDoc = snapshot.data();
+   let sendNotification = false;
+   let notificationBody = '';
+   if(documentDoc.airQuality > 10){
+       notificationBody.concat('Air pollution');
+       sendNotification = true;
+   }
+   if(documentDoc.lpg > 10){
+       notificationBody.concat('LPG ');
+       sendNotification = true;
+   }
+   if(documentDoc.turbidity > 10){
+       notificationBody.concat('turbidity quality');
+       sendNotification = true;
+   }
+    if(documentDoc.ph > 10){
+        notificationBody.concat('ph quality');
+        sendNotification = true;
+    }
+    if(documentDoc.temperature > 10){
+        notificationBody.concat('temperature ');
+        sendNotification = true;
+    }
+    if(documentDoc.humidity > 10){
+        notificationBody.concat('humidity ');
+        sendNotification = true;
+    }
+    if(documentDoc.noise > 10){
+        notificationBody.concat('noise pollution');
+        sendNotification = true;
+    }
+    if(sendNotification){
+        console.log('notification message is:'+ notificationBody);
+        const payload = {
+            notification : {
+                title: 'Seems like pollution is high..',
+                body: notificationBody
+            }
+        };
+        admin.messaging().sendToTopic('appNotification', payload)
+            .then((response) => {
+                console.log('Successfully sent notification message to topic:', response);
+                return response;
+            }).catch((error) => {
+            console.log('error sending notification message to topic:', error);
+        });
+    }
 });
