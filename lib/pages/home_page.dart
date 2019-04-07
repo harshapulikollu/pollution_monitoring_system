@@ -131,6 +131,8 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     _gotoUserLocation(userLatitude, userLongitude);
     _addMarkerOnMap(latitude, longitude, userLocation: true);
+    //calling below method to show the pollution of user's device location w/o needing to tap on it.
+    _getLevelOfPollution(latitude, longitude);
   }
 
   void getMarkersFromDB() async{
@@ -291,14 +293,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _getLevelOfPollution(double latitude, double longitude) {
+    bool dataExists = false;
     Firestore.instance.collection('sensorData').document(latitude.toString()+'&'+longitude.toString()).collection('data')
     .orderBy('timestamp', descending: false)
         .snapshots().listen((querySnapshots){
           _collapsedBottomSheetColor = Colors.blueGrey;
-
-          print('line 295 ${querySnapshots.documents.length}');
+          print('line 300 ${querySnapshots.documents.length}');
           querySnapshots.documents.forEach((docSnapshot){
             pollutionLevel = 0;
+            dataExists = true;
            int airQuality = docSnapshot.data['airQuality'];
            int humidity  = docSnapshot.data['humidity'];
            int lpg  = docSnapshot.data['lpg'];
@@ -330,12 +333,12 @@ class _MyHomePageState extends State<MyHomePage> {
              pollutionLevel++;
            }
           });
-          print('line 332 ${pollutionLevel}');
-          if(pollutionLevel == 0){
+
+          if(pollutionLevel == 0 && dataExists){
             _collapsedBottomSheetColor = Colors.green;
           }
           if( pollutionLevel >0 && pollutionLevel <= 2){
-            _collapsedBottomSheetColor = Colors.yellow;
+            _collapsedBottomSheetColor = Colors.amber;
           }
           if(pollutionLevel>2 && pollutionLevel <= 5){
             _collapsedBottomSheetColor = Colors.orange;
@@ -343,9 +346,7 @@ class _MyHomePageState extends State<MyHomePage> {
           if(pollutionLevel > 5){
             _collapsedBottomSheetColor =Colors.red;
           }
-          setState(() {
-
-          });
+          setState(() { /* This is called to render UI inorder to show changes*/});
     });
   }
 
