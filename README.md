@@ -1,4 +1,4 @@
-# pollution_monitoring_system
+# ![App logo](https://raw.githubusercontent.com/harshapulikollu/pollution_monitoring_system/master/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png) pollution_monitoring_system
 
 A new Flutter application for [Lovely Professional University](https://www.lpu.in) capstone 2019(course code- CSE445), which monitors the pollution around the location where the device is held and alerts
   users when there the pollution level is high in that location. Users can see the data in real-time through app.
@@ -7,11 +7,12 @@ A new Flutter application for [Lovely Professional University](https://www.lpu.i
 ## Task to be done:
 - [X] ~~Google maps on Home screen of app(get API key for that).~~
 - [X] ~~Get location of that device and show marker on map.~~
-- [ ] Persistent model sheet which will show data related to that location.
+- [ ] Persistent full model sheet which will show data related to that location.
+- [X] ~~Change color of collapsed bottom sheet depending on how many pollutions threshold limit exceeded~~
 - [X] ~~Show Satellite view and map view.~~
 - [X] ~~Floating button to change b/w views.~~
 - [X] ~~Add firebase json file to app for interacting with Database and sending notifications.~~
 - [ ] Get data from database as stream for particular marker(location).
-- [ ] Add(code) cloud functions to trigger notification alerts to user when any parameter level reaches threshold.
+- [X] Add(code) cloud functions to trigger notification alerts to user when any parameter level reaches threshold.
 - [ ] Show real-time graph of data (if feasible).
 - [X] ~~Add info/about screen.~~

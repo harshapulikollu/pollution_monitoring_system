@@ -22,6 +22,7 @@ exports.saveSensorDataToDB = functions.https.onRequest((request, response) => {
    const temperature = parseFloat(request.query.temperature);
    const humidity = parseFloat(request.query.humidity);
    const noise = parseFloat(request.query.noise);
+   const docID = String(latitude+'&'+longitude);
 
    //TODO: Add/edit rest of sensors values to resp. variables from queryString here.
     // After getting values from queryString we will create a 'data' variable with all the keys and their resp. values.
@@ -36,55 +37,85 @@ exports.saveSensorDataToDB = functions.https.onRequest((request, response) => {
         'temperature': temperature,
         'humidity': humidity,
         'noise': noise,
+        'docID':docID,
         //TODO: Add/edit sensor name/values data here
     };
     //After creating 'data' variable we will upload into the database.
     db.collection('sensorData').doc(latitude+'&'+longitude).collection('data').doc(timestamp).set(data).then(function() {
         //IF data enter was successful following code executes.
         console.log('successfully entered data into database.');
-        response.status(200).send('Data added into database successfully!');
+        db.collection('locationMarkers').doc(docID).get().then(snapshot => {
+            if(!snapshot.exists){
+                db.collection('locationMarkers').doc(latitude+'&'+longitude).set({
+                    'latitude': latitude,
+                    'longitude': longitude,
+                }).then(function () {
+                    console.log('added lat and lng as marker');
+                    response.status(200).send('Data added into database successfully!');
+                    return 0;
+                }).catch(function(error){
+                    console.log('error', error);
+                });
+            }else{
+                console.log('Already marker exists');
+            }
+            return 0;
+        }).catch(function (error) {
+            console.log('error', error);
+            response.status(500).send('Error occurred while adding data into database with following error: '+error);
+        });
+        // response.status(200).send('Data added into database successfully!');
         return 0;
     }).catch(function (error) {
         //IF data enter was unSuccessful following code executes.
         console.log('Error occurred while adding data into database.',error);
-        response.status(500).send('Error occurred while adding data into database with following error: '+error);
+        // response.status(500).send('Error occurred while adding data into database with following error: '+error);
     });
 //end of Http request.
+
 });
 
 exports.sendNotification = functions.firestore.document('sensorData/{locDoc}/data/{timestamp}').onCreate((snapshot, context) => {
    const documentDoc = snapshot.data();
    let sendNotification = false;
-   let notificationBody = '';
+   let notificationBody = 'It\'s high ';
    if(documentDoc.airQuality > 10){
-       notificationBody.concat('Air pollution');
+       notificationBody =notificationBody + ' Air pollution';
+       console.log('came into airQuality');
        sendNotification = true;
    }
    if(documentDoc.lpg > 10){
-       notificationBody.concat('LPG ');
+       notificationBody =notificationBody + ' LPG level';
+       console.log('came into LPG');
        sendNotification = true;
    }
    if(documentDoc.turbidity > 10){
-       notificationBody.concat('turbidity quality');
+       notificationBody =notificationBody + ' Turbidity level';
+       console.log('came into turbidity');
        sendNotification = true;
    }
     if(documentDoc.ph > 10){
-        notificationBody.concat('ph quality');
+        notificationBody =notificationBody + ' pH level';
+        console.log('came into ph');
         sendNotification = true;
     }
     if(documentDoc.temperature > 10){
-        notificationBody.concat('temperature ');
+        notificationBody =notificationBody + ' temperature';
+        console.log('came into temp');
         sendNotification = true;
     }
     if(documentDoc.humidity > 10){
-        notificationBody.concat('humidity ');
+        notificationBody =notificationBody + ' humidity level';
+        console.log('came into humidity');
         sendNotification = true;
     }
     if(documentDoc.noise > 10){
-        notificationBody.concat('noise pollution');
+        notificationBody =notificationBody + ' noise pollution';
+        console.log('came into noise');
         sendNotification = true;
     }
     if(sendNotification){
+        console.log('came into notification sending');
         console.log('notification message is:'+ notificationBody);
         const payload = {
             notification : {

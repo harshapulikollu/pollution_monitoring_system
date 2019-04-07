@@ -41,8 +41,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
 
+  MaterialColor _collapsedBottomSheetColor = Colors.blueGrey;
   PanelController _bottomSheetController = new PanelController();
 
+  int pollutionLevel = 0;
 
   void _onMapCreated(GoogleMapController controller) {
     //This method is called upon map created
@@ -170,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //padding: EdgeInsets.all(20.0),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
-        color: Colors.blueGrey,
+        color: _collapsedBottomSheetColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24.0),
           topRight: Radius.circular(24.0),
@@ -246,16 +248,9 @@ class _MyHomePageState extends State<MyHomePage> {
       position: LatLng(latitude, longitude),
       onTap: (){
         getLocationDetailsOfCoordinates(latitude, longitude);
+        _getLevelOfPollution(latitude,longitude);
       },
       icon: BitmapDescriptor.defaultMarkerWithHue(userLocation ? BitmapDescriptor.hueViolet : BitmapDescriptor.hueRed),));
-    //added smaple checking data
-
-//    _markers.add(Marker(markerId: MarkerId('jdkddf'),
-//      position: LatLng(31.2536, 75.7037),
-//      onTap: (){
-//        getLocationDetailsOfCoordinates(31.2536, 75.7037);
-//      },
-//      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),));
 
     setState(() {
     });
@@ -293,6 +288,65 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
     _firebaseMessaging.subscribeToTopic('appNotification');
+  }
+
+  void _getLevelOfPollution(double latitude, double longitude) {
+    Firestore.instance.collection('sensorData').document(latitude.toString()+'&'+longitude.toString()).collection('data')
+    .orderBy('timestamp', descending: false)
+        .snapshots().listen((querySnapshots){
+          _collapsedBottomSheetColor = Colors.blueGrey;
+
+          print('line 295 ${querySnapshots.documents.length}');
+          querySnapshots.documents.forEach((docSnapshot){
+            pollutionLevel = 0;
+           int airQuality = docSnapshot.data['airQuality'];
+           int humidity  = docSnapshot.data['humidity'];
+           int lpg  = docSnapshot.data['lpg'];
+           int noise = docSnapshot.data['noise'];
+           int ph = docSnapshot.data['ph'];
+           int temperature =  docSnapshot.data['temperature'];
+           int turbidity = docSnapshot.data['turbidity'];
+
+
+           if(airQuality > 10){
+             pollutionLevel++;
+           }
+           if(humidity > 10){
+             pollutionLevel++;
+           }
+           if(lpg > 10){
+             pollutionLevel++;
+           }
+           if(noise > 10){
+             pollutionLevel++;
+           }
+           if(ph >10){
+             pollutionLevel++;
+           }
+           if(temperature > 10){
+             pollutionLevel++;
+           }
+           if(turbidity > 10){
+             pollutionLevel++;
+           }
+          });
+          print('line 332 ${pollutionLevel}');
+          if(pollutionLevel == 0){
+            _collapsedBottomSheetColor = Colors.green;
+          }
+          if( pollutionLevel >0 && pollutionLevel <= 2){
+            _collapsedBottomSheetColor = Colors.yellow;
+          }
+          if(pollutionLevel>2 && pollutionLevel <= 5){
+            _collapsedBottomSheetColor = Colors.orange;
+          }
+          if(pollutionLevel > 5){
+            _collapsedBottomSheetColor =Colors.red;
+          }
+          setState(() {
+
+          });
+    });
   }
 
 
