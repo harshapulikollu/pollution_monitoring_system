@@ -51,13 +51,14 @@ exports.saveSensorDataToDB = functions.https.onRequest((request, response) => {
                     'longitude': longitude,
                 }).then(function () {
                     console.log('added lat and lng as marker');
-                    response.status(200).send('Data added into database successfully!');
+                    response.status(200).send('Data added into database successfully! new marker added into DB');
                     return 0;
                 }).catch(function(error){
                     console.log('error', error);
                 });
             }else{
                 console.log('Already marker exists');
+				response.status(200).send('Data added into database successfully! and marker exists already');
             }
             return 0;
         }).catch(function (error) {
@@ -130,5 +131,7 @@ exports.sendNotification = functions.firestore.document('sensorData/{locDoc}/dat
             }).catch((error) => {
             console.log('error sending notification message to topic:', error);
         });
+		return 0;
     }
+	return 0;
 });
