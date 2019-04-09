@@ -1,4 +1,4 @@
-# ![App logo](https://raw.githubusercontent.com/harshapulikollu/pollution_monitoring_system/master/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png) pollution_monitoring_system
+# ![App logo](https://raw.githubusercontent.com/harshapulikollu/pollution_monitoring_system/master/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png) pollution_monitoring_system
 
 A new Flutter application for [Lovely Professional University](https://www.lpu.in) capstone 2019(course code- CSE445), which monitors the pollution around the location where the device is held and alerts
   users when there the pollution level is high in that location. Users can see the data in real-time through app.

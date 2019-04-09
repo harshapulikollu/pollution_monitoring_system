@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pollution_monitoring_system/pages/about_page.dart';
+import 'package:pollution_monitoring_system/pages/loc_pollution_details.dart';
 import 'package:pollution_monitoring_system/util/location/location.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -161,7 +162,8 @@ class _MyHomePageState extends State<MyHomePage> {
               subtitle: Text('${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...': selectedMarketLongitude}',
                 style: TextStyle(color: Colors.black),)
           ),
-          //TODO: show all the related to this location.
+          LocPollutionDetails(selectedMarkerLatitude.toString(),selectedMarketLongitude.toString()),
+          //TODO: show all the data related to this location.
         ],
       ),
     );
@@ -298,9 +300,10 @@ class _MyHomePageState extends State<MyHomePage> {
     .orderBy('timestamp', descending: false)
         .snapshots().listen((querySnapshots){
           _collapsedBottomSheetColor = Colors.blueGrey;
-          print('line 300 ${querySnapshots.documents.length}');
+          print('line 300 ${querySnapshots.documents.length} $latitude, $longitude');
+          pollutionLevel = 0;
           querySnapshots.documents.forEach((docSnapshot){
-            pollutionLevel = 0;
+
             dataExists = true;
            int airQuality = docSnapshot.data['airQuality'];
            int humidity  = docSnapshot.data['humidity'];
@@ -333,7 +336,10 @@ class _MyHomePageState extends State<MyHomePage> {
              pollutionLevel++;
            }
           });
-
+          print('line 338 ${pollutionLevel}, data Exists ${dataExists}, $latitude, $longitude');
+          if(!dataExists){
+            _collapsedBottomSheetColor = Colors.blueGrey;
+          }
           if(pollutionLevel == 0 && dataExists){
             _collapsedBottomSheetColor = Colors.green;
           }
