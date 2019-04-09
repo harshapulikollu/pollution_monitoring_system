@@ -189,7 +189,8 @@ class _MyHomePageState extends State<MyHomePage> {
             onTap: (){
               _bottomSheetController.open();
             },
-            child: Icon(Icons.keyboard_arrow_up,color: Colors.white,),
+            child: Icon(Icons.maximize,color: Colors.white
+              ,),
           ),
           ListTile(
               title: selectedLocationAddress == null ? Text('Getting data..') : getSelectedLocationName(collapsed: true),

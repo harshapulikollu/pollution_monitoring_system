@@ -15,7 +15,7 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
   Widget build(BuildContext context) {
 
     return StreamBuilder(
-        stream: Firestore.instance.collection('sendorData').document(widget.selectedLocationLatitude+'&'+widget.selectedLocationLongitude).collection('data').orderBy('timestamp').snapshots(),
+        stream: Firestore.instance.collection('sensorData').document(widget.selectedLocationLatitude+'&'+widget.selectedLocationLongitude).collection('data').orderBy('timestamp').snapshots(),
         builder: (BuildContext context, snapshot){
           if(snapshot.hasError){
             return Center(child: Text('Oops.. something went wrong.'),);
@@ -26,11 +26,15 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
               return Center(child: CircularProgressIndicator(),);
             case ConnectionState.none:
               return (Text('none'));
-
               default:
               print('line 25 coonection state done');
               if(snapshot.hasData) {
-                return Center(child: Text('cool exists'),);
+                if(snapshot.data.documents.length > 0){
+                  return Center(child: Text('cool exists'),);
+                }else{
+                  return Center(child: Text('Hmm.. seems like no data for this locatiom'),);
+                }
+
               }else{
                 return Center(child:  Text('Hmm... seems like we don\'t have data for this location'),);
               }
