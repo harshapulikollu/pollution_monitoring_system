@@ -86,46 +86,53 @@ print('line 16 loc ${widget.selectedLocationLatitude}, ${widget.selectedLocation
         padding: EdgeInsets.all(8.0),
         child: Column(
           children: <Widget>[
+
             ExpansionTile(title: Text('Air quality'),
-              children: airQuality.map((data) => ListTile(
-                title: Text(data.toString()),
-              ),).toList(),),
-            ExpansionTile(title: Text('humidity'),
-              children: humidity.map((data) => SingleChildScrollView(
-                child: ListTile(
-                  title: Text(data.toString()),
-                ),
-              )).toList(),),
+              children: airQuality.asMap().map((index,data) => MapEntry(index,  ListTile(
+                title: Text('Air quality is:'),
+                trailing: Text(data.toString()),
+                subtitle: Text(DateTime.fromMillisecondsSinceEpoch(int.tryParse(timestamp[index].toString())*1000).toUtc().toString()),
+              ),),).values.toList()),
+
+
             ExpansionTile(title: Text('Temperature'),
-              children: temperature.map((data) => SingleChildScrollView(
-                child: ListTile(
-                  title: Text(data.toString()),
-                ),
-              )).toList(),),
-            ExpansionTile(title: Text('noise'),
-              children: noise.map((data) => SingleChildScrollView(
-                child: ListTile(
-                  title: Text(data.toString()),
-                ),
-              )).toList(),),
+                children: temperature.asMap().map((index,data) => MapEntry(index,  ListTile(
+                  title: Text('Temperature is:'),
+                  trailing: Text(data.toString()),
+                  subtitle: Text(DateTime.fromMillisecondsSinceEpoch(int.tryParse(timestamp[index].toString())*1000).toUtc().toString()),
+                ),),).values.toList()),
+
+            ExpansionTile(title: Text('Humidity'),
+                children: humidity.asMap().map((index,data) => MapEntry(index,  ListTile(
+                  title: Text('Humidity is:'),
+                  trailing: Text(data.toString()),
+                  subtitle: Text(DateTime.fromMillisecondsSinceEpoch(int.tryParse(timestamp[index].toString())*1000).toUtc().toString()),
+                ),),).values.toList()),
+
+            ExpansionTile(title: Text('Noise'),
+                children: noise.asMap().map((index,data) => MapEntry(index,  ListTile(
+                  title: Text('Noise is:'),
+                  trailing: Text(data.toString()),
+                  subtitle: Text(DateTime.fromMillisecondsSinceEpoch(int.tryParse(timestamp[index].toString())*1000).toUtc().toString()),
+                ),),).values.toList()),
             ExpansionTile(title: Text('LPG'),
-              children: lpg.map((data) => SingleChildScrollView(
-                child: ListTile(
-                  title: Text(data.toString()),
-                ),
-              )).toList(),),
-            ExpansionTile(title: Text('ph level'),
-              children: ph.map((data) => SingleChildScrollView(
-                child: ListTile(
-                  title: Text(data.toString()),
-                ),
-              )).toList(),),
-            ExpansionTile(title: Text('turbidity'),
-              children: turbidity.map((data) => SingleChildScrollView(
-                child: ListTile(
-                  title: Text(data.toString()),
-                ),
-              )).toList(),),
+                children: lpg.asMap().map((index,data) => MapEntry(index,  ListTile(
+                  title: Text('LPG is:'),
+                  trailing: Text(data.toString()),
+                  subtitle: Text(DateTime.fromMillisecondsSinceEpoch(int.tryParse(timestamp[index].toString())*1000).toUtc().toString()),
+                ),),).values.toList()),
+            ExpansionTile(title: Text('pH level'),
+                children: ph.asMap().map((index,data) => MapEntry(index,  ListTile(
+                  title: Text('pH level is:'),
+                  trailing: Text(data.toString()),
+                  subtitle: Text(DateTime.fromMillisecondsSinceEpoch(int.tryParse(timestamp[index].toString())*1000).toUtc().toString()),
+                ),),).values.toList()),
+            ExpansionTile(title: Text('Turbidity'),
+                children: turbidity.asMap().map((index,data) => MapEntry(index,  ListTile(
+                  title: Text('Turbidity:'),
+                  trailing: Text(data.toString()),
+                  subtitle: Text(DateTime.fromMillisecondsSinceEpoch(int.tryParse(timestamp[index].toString())*1000).toUtc().toString()),
+                ),),).values.toList()),
           ],
         )
     );
