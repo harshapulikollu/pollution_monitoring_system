@@ -33,6 +33,8 @@ dependencies:
   geocoder:
   cloud_firestore: 0.8.2+3
   firebase_messaging:
+  flutter_local_notifications: ^0.6.0
+  path_provider: ^0.5.0+1
   url_launcher:
 
 

@@ -7,9 +7,11 @@ import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:pollution_monitoring_system/pages/about_page.dart';
 import 'package:pollution_monitoring_system/pages/loc_pollution_details.dart';
+import 'package:pollution_monitoring_system/util/location/helper/local_notification_helper.dart';
 import 'package:pollution_monitoring_system/util/location/location.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -41,6 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
   final Set<Marker> _markers = {};
 
   FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
+
+  //Instance for Local notifications, In android notifications won't be delivered if the app was in foreground
+  //developer have to manually create the notification locally and show to user.
+  final notifications = FlutterLocalNotificationsPlugin();
 
   MaterialColor _collapsedBottomSheetColor = Colors.blueGrey;
   PanelController _bottomSheetController = new PanelController();
@@ -112,6 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
     initPlatformState();
     getMarkersFromDB();
     setUpPushNotifications();
+    setUpLocalNotifications();
   }
 
   void initPlatformState() async {
@@ -281,13 +288,14 @@ class _MyHomePageState extends State<MyHomePage> {
           //Triggers when app is in foreground and notification arrives
           //TODO: add local notification here
           print('line 280 $message');
+          showLocalNotificationToUser(message);
         },
         onResume: (Map<String, dynamic> message) async {
-          //Automatically notification will show up in the try.
+          //Automatically notification will show up in the system tray.
           print('line 284 $message');
         },
         onLaunch: (Map<String, dynamic> message) async {
-          //Automatically notification will show up in the try.
+          //Automatically notification will show up in the system tray.
           print(' line 287 $message');
         },
       );
@@ -355,6 +363,31 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           setState(() { /* This is called to render UI inorder to show changes*/});
     });
+  }
+
+  void setUpLocalNotifications() {
+    //Inorder to provide notifications locally a few settings are required for the better working of plugin and UX.
+    final settingsAndroid = AndroidInitializationSettings('app_icon');
+    final settingsIOS = IOSInitializationSettings(
+        onDidReceiveLocalNotification: (id, title, body, payload) =>
+            onSelectNotification(payload));
+
+    notifications.initialize(
+        InitializationSettings(settingsAndroid, settingsIOS),
+        onSelectNotification: onSelectNotification);
+  }
+
+  Future onSelectNotification(String payload) async{
+    //goto (animate Maps camera) to location we got in payload and make selectedLocation to new location.
+    if(payload == null){
+      print('line 384 localo notification: payload is null');
+    }
+      print('line 380 local notification: $payload');
+  }
+
+  void showLocalNotificationToUser(Map<String, dynamic> message) {
+  showOngoingNotification(notifications,
+  title: message['notification']['title'], body: message['notification']['body']);
   }
 
 
