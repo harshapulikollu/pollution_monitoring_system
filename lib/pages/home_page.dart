@@ -181,14 +181,19 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             child: Icon(Icons.keyboard_arrow_down),
           ),
-          ListTile(
-              title: selectedLocationAddress == null
-                  ? Text('Getting data..')
-                  : getSelectedLocationName(collapsed: false),
-              subtitle: Text(
-                '${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...' : selectedMarketLongitude}',
-                style: TextStyle(color: Colors.black),
-              )),
+          GestureDetector(
+            onVerticalDragEnd: (details){
+              _bottomSheetController.close();
+            },
+            child: ListTile(
+                title: selectedLocationAddress == null
+                    ? Text('Getting data..')
+                    : getSelectedLocationName(collapsed: false),
+                subtitle: Text(
+                  '${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...' : selectedMarketLongitude}',
+                  style: TextStyle(color: Colors.black),
+                )),
+          ),
           LocPollutionDetails(selectedMarkerLatitude.toString(),
               selectedMarketLongitude.toString()),
           //TODO: show all the data related to this location.
@@ -285,7 +290,9 @@ class _MyHomePageState extends State<MyHomePage> {
     LatLng _latLan = LatLng(latitude, latitude);
     //this is as of now once we get the real data we will remove the second one
     //first marker is user's device GPS location
+    if(userLocation){
 
+    }
     _markers.add(Marker(
       markerId: MarkerId(_latLan.toString()),
       position: LatLng(latitude, longitude),

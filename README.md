@@ -7,15 +7,15 @@ A new Flutter application for [Lovely Professional University](https://www.lpu.i
 ## Task to be done:
 - [X] ~~Google maps on Home screen of app(get API key for that).~~
 - [X] ~~Get location of that device and show marker on map.~~
-- [ ] Persistent full model sheet which will show data related to that location.
+- [X] ~~Persistent full model sheet which will show data related to that location.~~
 - [X] ~~Change color of collapsed bottom sheet depending on how many pollutions threshold limit exceeded~~
 - [X] ~~Show Satellite view and map view.~~
 - [X] ~~Floating button to change b/w views.~~
 - [X] ~~Add firebase json file to app for interacting with Database and sending notifications.~~
-- [ ] Get data from database as stream for particular marker(location).
+- [X] ~~Get data from database as stream for particular marker(location)~~
 - [X] ~~Local Notifications for alerts when app is opened.~~
 - [ ] Send location details in notifications as data in payload.
 - [ ] Get the location details from payload and move camera to that location. 
 - [X] ~~Add(code) cloud functions to trigger notification alerts to user when any parameter level reaches threshold.~~
-- [ ] Show real-time graph of data (if feasible).
+- [X] ~~Show real-time graph of data(if feasible)~~
 - [X] ~~Add info/about screen.~~

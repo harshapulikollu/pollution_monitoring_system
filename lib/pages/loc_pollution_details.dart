@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sparkline/flutter_sparkline.dart';
 
 class LocPollutionDetails extends StatefulWidget {
   final String selectedLocationLatitude;
@@ -11,14 +12,14 @@ class LocPollutionDetails extends StatefulWidget {
 
 class _LocPollutionDetailsState extends State<LocPollutionDetails> {
 
-List airQuality = [];
-List humidity = [];
-List lpg = [];
-List noise = [];
-List ph =[];
-List timestamp = [];
-List temperature = [];
-List turbidity = [];
+List<double> airQuality = [];
+List<double> humidity = [];
+List<double> lpg = [];
+List<double> noise = [];
+List<double> ph =[];
+List<String> timestamp = [];
+List<double> temperature = [];
+List<double> turbidity = [];
 
 
   @override
@@ -70,15 +71,14 @@ print('line 16 loc ${widget.selectedLocationLatitude}, ${widget.selectedLocation
     timestamp.clear();
     turbidity.clear();
     documents.forEach((docSnapshot){
-      print('line 66 ${docSnapshot.data['airQuality']}');
-      airQuality.add(docSnapshot.data['airQuality']);
-      humidity.add(docSnapshot.data['humidity']);
-      lpg.add(docSnapshot.data['lpg']);
-      noise.add(docSnapshot.data['noise']);
-      ph.add(docSnapshot.data['ph']);
-      temperature.add(docSnapshot.data['temperature']);
+      airQuality.add(double.tryParse(docSnapshot.data['airQuality'].toString()));
+      humidity.add(double.tryParse(docSnapshot.data['humidity'].toString()));
+      lpg.add(double.tryParse(docSnapshot.data['lpg'].toString()));
+      noise.add(double.tryParse(docSnapshot.data['noise'].toString()));
+      ph.add(double.tryParse(docSnapshot.data['ph'].toString()));
+      temperature.add(double.tryParse(docSnapshot.data['temperature'].toString()));
       timestamp.add(docSnapshot.data['timestamp']);
-      turbidity.add(docSnapshot.data['turbidity']);
+      turbidity.add(double.tryParse(docSnapshot.data['turbidity'].toString()));
     });
 
     return
@@ -92,7 +92,8 @@ print('line 16 loc ${widget.selectedLocationLatitude}, ${widget.selectedLocation
                 title: Text('Air quality is:'),
                 trailing: Text(data.toString()),
                 subtitle: Text(DateTime.fromMillisecondsSinceEpoch(int.tryParse(timestamp[index].toString())*1000).toUtc().toString()),
-              ),),).values.toList()),
+              ),),).values.toList(),
+              ),
 
 
             ExpansionTile(title: Text('Temperature'),
@@ -133,6 +134,36 @@ print('line 16 loc ${widget.selectedLocationLatitude}, ${widget.selectedLocation
                   trailing: Text(data.toString()),
                   subtitle: Text(DateTime.fromMillisecondsSinceEpoch(int.tryParse(timestamp[index].toString())*1000).toUtc().toString()),
                 ),),).values.toList()),
+            Card(
+              child: Stack(
+                children: <Widget>[
+                  Sparkline(
+                    data: temperature,
+                    lineColor: Colors.orange,
+                  ),
+                  Sparkline(
+                    data: airQuality,
+                    lineColor: Colors.blue,
+                  ),
+                  Sparkline(
+                    data: humidity,
+                    lineColor: Colors.green,
+                  ),
+                  Sparkline(
+                    data: turbidity,
+                    lineColor: Colors.black,
+                  ),
+                  Sparkline(
+                    data: ph,
+                    lineColor: Colors.yellow,
+                  ),
+                  Sparkline(
+                    data: noise,
+                    lineColor: Colors.pink,
+                  ),
+                ],
+              )
+            )
           ],
         )
     );
