@@ -135,32 +135,60 @@ print('line 16 loc ${widget.selectedLocationLatitude}, ${widget.selectedLocation
                   subtitle: Text(DateTime.fromMillisecondsSinceEpoch(int.tryParse(timestamp[index].toString())*1000).toUtc().toString()),
                 ),),).values.toList()),
             Card(
-              child: Stack(
+              child: Column(
                 children: <Widget>[
-                  Sparkline(
-                    data: temperature,
-                    lineColor: Colors.orange,
+                  Stack(
+                    children: <Widget>[
+                      Sparkline(
+                        data: temperature,
+                        lineColor: Colors.orange,
+                      ),
+                      Sparkline(
+                        data: airQuality,
+                        lineColor: Colors.blue,
+                      ),
+                      Sparkline(
+                        data: humidity,
+                        lineColor: Colors.green,
+                      ),
+                      Sparkline(
+                        data: turbidity,
+                        lineColor: Colors.black,
+                      ),
+                      Sparkline(
+                        data: ph,
+                        lineColor: Colors.yellow,
+                      ),
+                      Sparkline(
+                        data: noise,
+                        lineColor: Colors.pink,
+                      ),
+                    ],
                   ),
-                  Sparkline(
-                    data: airQuality,
-                    lineColor: Colors.blue,
-                  ),
-                  Sparkline(
-                    data: humidity,
-                    lineColor: Colors.green,
-                  ),
-                  Sparkline(
-                    data: turbidity,
-                    lineColor: Colors.black,
-                  ),
-                  Sparkline(
-                    data: ph,
-                    lineColor: Colors.yellow,
-                  ),
-                  Sparkline(
-                    data: noise,
-                    lineColor: Colors.pink,
-                  ),
+                  Wrap(
+                    spacing: 10.0,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: <Widget>[
+                      Text('AirQualiy',style: TextStyle(
+                        color: Colors.blue,
+                      ),),
+                      Text('Temperature', style: TextStyle(
+    color: Colors.orange,
+    ),),
+                      Text('Humidity', style: TextStyle(
+                        color: Colors.green,
+                      ),),
+                      Text('Noise', style: TextStyle(
+                        color: Colors.pink,
+                      ),),
+                      Text('pH level', style: TextStyle(
+                        color: Colors.yellow,
+                      ),),
+                      Text('Turbidity',style: TextStyle(
+                        color: Colors.black,
+                      ),),
+                    ],
+                  )
                 ],
               )
             )
