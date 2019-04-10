@@ -44,6 +44,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   FirebaseMessaging _firebaseMessaging = new FirebaseMessaging();
 
+  //keys used for unique identification. Here we use this global key for scaffold to show snackBar
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   //Instance for Local notifications, In android notifications won't be delivered if the app was in foreground
   //developer have to manually create the notification locally and show to user.
   final notifications = FlutterLocalNotificationsPlugin();
@@ -63,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // This method is rerun every time setState is called.
     print('line 93 ${_markers.length}');
     return Scaffold(
+      key: _scaffoldKey,
       body: Stack(
         children: <Widget>[
           SlidingUpPanel(
@@ -137,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
       selectedMarketLongitude = longitude;
       selectedLocationAddress = userLocationData[2];
     });
-    _gotoUserLocation(userLatitude, userLongitude);
+    _gotoLocation(userLatitude, userLongitude);
     _addMarkerOnMap(latitude, longitude, userLocation: true);
     //calling below method to show the pollution of user's device location w/o needing to tap on it.
     _getLevelOfPollution(latitude, longitude);
@@ -244,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
           fontWeight: FontWeight.bold),);
   }
 
-  void _gotoUserLocation(double userLatitude, double userLongitude) async{
+  void _gotoLocation(double userLatitude, double userLongitude) async{
     //after getting the location data now we move to user(device) location.
     final GoogleMapController _controller = await _mapController.future;
     _controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(userLatitude, userLongitude),
@@ -386,6 +390,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void showLocalNotificationToUser(Map<String, dynamic> message) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('High level pollution detected',),
+    action: SnackBarAction(label: 'Move to location', onPressed: (){
+      _gotoLocation(double.tryParse(message['data']['latitude']), double.tryParse(message['data']['longitude']));
+      getLocationDetailsOfCoordinates(double.tryParse(message['data']['latitude']), double.tryParse(message['data']['longitude']));
+      _getLevelOfPollution(double.tryParse(message['data']['latitude']), double.tryParse(message['data']['longitude']));
+    }),));
   showOngoingNotification(notifications,
   title: message['notification']['title'], body: message['notification']['body']);
   }

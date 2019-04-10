@@ -1,7 +1,7 @@
 # ![App logo](https://raw.githubusercontent.com/harshapulikollu/pollution_monitoring_system/master/android/app/src/main/res/mipmap-hdpi/ic_launcher.png) pollution_monitoring_system
 
 A new Flutter application for [Lovely Professional University](https://www.lpu.in) capstone 2019(course code- CSE445), which monitors the pollution around the location where the device is held and alerts
-  users when there the pollution level is high in that location. Users can see the data in real-time through app.
+  users when the pollution level is high in that location. Users can see the data in real-time through app.
   Developed by [Akshay kumar mishra](https://www.linkedin.com/in/akshay-kumar-mishra-563847116/)(11406923), [Aman prathap singh]()(), [Harsha pulikollu](https://www.linkedin.com/in/harsha-pulikollu/)(11404683), [Prince kumar jha]()(11407392), [veerender]()() under the guidance of Tejinder sir.
 
 ## Task to be done:
