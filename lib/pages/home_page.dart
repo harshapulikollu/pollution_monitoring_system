@@ -86,19 +86,25 @@ class _MyHomePageState extends State<MyHomePage> {
             collapsed: _getCollapsedDetailsSheet(context),
             controller: _bottomSheetController,
           ),
-          Padding(padding: EdgeInsets.only(right: 15.0,top: 40.0),
+          Padding(
+            padding: EdgeInsets.only(right: 15.0, top: 40.0),
             child: Align(
                 alignment: Alignment.topRight,
                 child: GestureDetector(
-                  child: Icon(Icons.info,
-                    color: _currentMapType == MapType.normal ? Colors.black : Colors.white,),
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
+                  child: Icon(
+                    Icons.info,
+                    color: _currentMapType == MapType.normal
+                        ? Colors.black
+                        : Colors.white,
+                  ),
+                  onTap: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (BuildContext context) {
                       return AboutPage();
                     }));
                   },
-                )
-            ),)
+                )),
+          )
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -147,33 +153,42 @@ class _MyHomePageState extends State<MyHomePage> {
     _getLevelOfPollution(latitude, longitude);
   }
 
-  void getMarkersFromDB() async{
-   Firestore.instance.collection('locationMarkers').snapshots().listen((locDocs){
-     locDocs.documents.forEach((docSnapshot){
-       String locDocIDName = docSnapshot.documentID;
-       List<String> locDocIDNameSplit = locDocIDName.split('&');
-       _addMarkerOnMap(double.tryParse(locDocIDNameSplit[0]), double.tryParse(locDocIDNameSplit[1]),userLocation: false);
-     });
-   });
+  void getMarkersFromDB() async {
+    Firestore.instance
+        .collection('locationMarkers')
+        .snapshots()
+        .listen((locDocs) {
+      locDocs.documents.forEach((docSnapshot) {
+        String locDocIDName = docSnapshot.documentID;
+        List<String> locDocIDNameSplit = locDocIDName.split('&');
+        _addMarkerOnMap(double.tryParse(locDocIDNameSplit[0]),
+            double.tryParse(locDocIDNameSplit[1]),
+            userLocation: false);
+      });
+    });
   }
 
   Widget _getFullDetailsSheet(BuildContext context) {
     //This method shows the details of the data from that location when sheet is open
-    return  SingleChildScrollView(
+    return SingleChildScrollView(
       child: Column(
         children: <Widget>[
           GestureDetector(
-            onTap: (){
+            onTap: () {
               _bottomSheetController.close();
             },
             child: Icon(Icons.keyboard_arrow_down),
           ),
           ListTile(
-              title: selectedLocationAddress == null ? Text('Getting data..') : getSelectedLocationName(collapsed: false),
-              subtitle: Text('${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...': selectedMarketLongitude}',
-                style: TextStyle(color: Colors.black),)
-          ),
-          LocPollutionDetails(selectedMarkerLatitude.toString(),selectedMarketLongitude.toString()),
+              title: selectedLocationAddress == null
+                  ? Text('Getting data..')
+                  : getSelectedLocationName(collapsed: false),
+              subtitle: Text(
+                '${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...' : selectedMarketLongitude}',
+                style: TextStyle(color: Colors.black),
+              )),
+          LocPollutionDetails(selectedMarkerLatitude.toString(),
+              selectedMarketLongitude.toString()),
           //TODO: show all the data related to this location.
         ],
       ),
@@ -183,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _getCollapsedDetailsSheet(BuildContext context) {
     //This method shows the details of the data from that location when sheet is not open
 
-    return  Container(
+    return Container(
       //padding: EdgeInsets.all(20.0),
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
@@ -197,17 +212,22 @@ class _MyHomePageState extends State<MyHomePage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           GestureDetector(
-            onTap: (){
+            onTap: () {
               _bottomSheetController.open();
             },
-            child: Icon(Icons.maximize,color: Colors.white
-              ,),
+            child: Icon(
+              Icons.maximize,
+              color: Colors.white,
+            ),
           ),
           ListTile(
-              title: selectedLocationAddress == null ? Text('Getting data..') : getSelectedLocationName(collapsed: true),
-              subtitle: Text('${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...': selectedMarketLongitude}',
-                style: TextStyle(color: Colors.white),)
-          )
+              title: selectedLocationAddress == null
+                  ? Text('Getting data..')
+                  : getSelectedLocationName(collapsed: true),
+              subtitle: Text(
+                '${selectedMarkerLatitude == null ? '...' : selectedMarkerLatitude} , ${selectedMarketLongitude == null ? '...' : selectedMarketLongitude}',
+                style: TextStyle(color: Colors.white),
+              ))
         ],
       ),
     );
@@ -216,66 +236,72 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget getSelectedLocationName({bool collapsed}) {
     //This method returns the Text widget which shows the location name of that marker
     String locationName;
-    if(selectedLocationAddress.addressLine == null){
-      if(selectedLocationAddress.subLocality == null){
-        if(selectedLocationAddress.locality == null){
-          if(selectedLocationAddress.subAdminArea == null){
-            if(selectedLocationAddress.adminArea == null){
+    if (selectedLocationAddress.addressLine == null) {
+      if (selectedLocationAddress.subLocality == null) {
+        if (selectedLocationAddress.locality == null) {
+          if (selectedLocationAddress.subAdminArea == null) {
+            if (selectedLocationAddress.adminArea == null) {
               locationName = 'unable to fetch location name';
-            }else{
+            } else {
               locationName = selectedLocationAddress.adminArea;
               print('LocalityName - admin area');
             }
-          }else{
+          } else {
             locationName = selectedLocationAddress.subAdminArea;
             print('LocalityName - sub admin area');
           }
-        }else{
+        } else {
           locationName = selectedLocationAddress.locality;
           print('LocalityName - locality area');
         }
-      }else{
+      } else {
         locationName = selectedLocationAddress.subLocality;
         print('LocalityName - sublocality area');
       }
-    }else{
+    } else {
       locationName = selectedLocationAddress.addressLine;
       print('LocalityName - addressline');
     }
-    return Text(selectedLocationAddress == null ? 'Getting data..' : locationName,
-      style: TextStyle(color: collapsed ? Colors.white : Colors.black,
+    return Text(
+      selectedLocationAddress == null ? 'Getting data..' : locationName,
+      style: TextStyle(
+          color: collapsed ? Colors.white : Colors.black,
           fontSize: 20.0,
-          fontWeight: FontWeight.bold),);
+          fontWeight: FontWeight.bold),
+    );
   }
 
-  void _gotoLocation(double userLatitude, double userLongitude) async{
+  void _gotoLocation(double userLatitude, double userLongitude) async {
     //after getting the location data now we move to user(device) location.
     final GoogleMapController _controller = await _mapController.future;
-    _controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(userLatitude, userLongitude),
-        zoom: 12.0)));
+    _controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: LatLng(userLatitude, userLongitude), zoom: 12.0)));
   }
 
   void _addMarkerOnMap(double latitude, double longitude, {bool userLocation}) {
     //This method will add marker onto Map every time when we call it.
-    LatLng _latLan =  LatLng(latitude, latitude);
+    LatLng _latLan = LatLng(latitude, latitude);
     //this is as of now once we get the real data we will remove the second one
     //first marker is user's device GPS location
-    _markers.add(Marker(markerId: MarkerId(_latLan.toString()),
+    _markers.add(Marker(
+      markerId: MarkerId(_latLan.toString()),
       position: LatLng(latitude, longitude),
-      onTap: (){
+      onTap: () {
         getLocationDetailsOfCoordinates(latitude, longitude);
-        _getLevelOfPollution(latitude,longitude);
+        _getLevelOfPollution(latitude, longitude);
       },
-      icon: BitmapDescriptor.defaultMarkerWithHue(userLocation ? BitmapDescriptor.hueViolet : BitmapDescriptor.hueRed),));
+      icon: BitmapDescriptor.defaultMarkerWithHue(
+          userLocation ? BitmapDescriptor.hueViolet : BitmapDescriptor.hueRed),
+    ));
 
-    setState(() {
-    });
-
+    setState(() {});
   }
 
-  void getLocationDetailsOfCoordinates(double latitude, double longitude) async{
+  void getLocationDetailsOfCoordinates(
+      double latitude, double longitude) async {
     //once user clicks on a marker we will send that location coordinates to the method and get details of it.
-    List selectedMarkerAddress = await getUserAddressFromCoordinates(latitude, longitude);
+    List selectedMarkerAddress =
+        await getUserAddressFromCoordinates(latitude, longitude);
     selectedLocationAddress = null;
     setState(() {
       //This setState method is called when we have refresh/render UI to show new changes made into UI
@@ -290,7 +316,6 @@ class _MyHomePageState extends State<MyHomePage> {
       _firebaseMessaging.configure(
         onMessage: (Map<String, dynamic> message) async {
           //Triggers when app is in foreground and notification arrives
-          //TODO: add local notification here
           print('line 280 $message');
           showLocalNotificationToUser(message);
         },
@@ -309,63 +334,67 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _getLevelOfPollution(double latitude, double longitude) {
     bool dataExists = false;
-    Firestore.instance.collection('sensorData').document(latitude.toString()+'&'+longitude.toString()).collection('data')
-    .orderBy('timestamp', descending: false)
-        .snapshots().listen((querySnapshots){
-          _collapsedBottomSheetColor = Colors.blueGrey;
-          print('line 300 ${querySnapshots.documents.length} $latitude, $longitude');
-          pollutionLevel = 0;
-          querySnapshots.documents.forEach((docSnapshot){
+    Firestore.instance
+        .collection('sensorData')
+        .document(latitude.toString() + '&' + longitude.toString())
+        .collection('data')
+        .orderBy('timestamp', descending: false)
+        .snapshots()
+        .listen((querySnapshots) {
+      _collapsedBottomSheetColor = Colors.blueGrey;
+      print(
+          'line 300 ${querySnapshots.documents.length} $latitude, $longitude');
+      pollutionLevel = 0;
+      querySnapshots.documents.forEach((docSnapshot) {
+        dataExists = true;
+        int airQuality = docSnapshot.data['airQuality'];
+        int humidity = docSnapshot.data['humidity'];
+        int lpg = docSnapshot.data['lpg'];
+        int noise = docSnapshot.data['noise'];
+        int ph = docSnapshot.data['ph'];
+        int temperature = docSnapshot.data['temperature'];
+        int turbidity = docSnapshot.data['turbidity'];
 
-            dataExists = true;
-           int airQuality = docSnapshot.data['airQuality'];
-           int humidity  = docSnapshot.data['humidity'];
-           int lpg  = docSnapshot.data['lpg'];
-           int noise = docSnapshot.data['noise'];
-           int ph = docSnapshot.data['ph'];
-           int temperature =  docSnapshot.data['temperature'];
-           int turbidity = docSnapshot.data['turbidity'];
-
-
-           if(airQuality > 10){
-             pollutionLevel++;
-           }
-           if(humidity > 10){
-             pollutionLevel++;
-           }
-           if(lpg > 10){
-             pollutionLevel++;
-           }
-           if(noise > 10){
-             pollutionLevel++;
-           }
-           if(ph >10){
-             pollutionLevel++;
-           }
-           if(temperature > 10){
-             pollutionLevel++;
-           }
-           if(turbidity > 10){
-             pollutionLevel++;
-           }
-          });
-          print('line 338 ${pollutionLevel}, data Exists ${dataExists}, $latitude, $longitude');
-          if(!dataExists){
-            _collapsedBottomSheetColor = Colors.blueGrey;
-          }
-          if(pollutionLevel == 0 && dataExists){
-            _collapsedBottomSheetColor = Colors.green;
-          }
-          if( pollutionLevel >0 && pollutionLevel <= 2){
-            _collapsedBottomSheetColor = Colors.amber;
-          }
-          if(pollutionLevel>2 && pollutionLevel <= 5){
-            _collapsedBottomSheetColor = Colors.orange;
-          }
-          if(pollutionLevel > 5){
-            _collapsedBottomSheetColor =Colors.red;
-          }
-          setState(() { /* This is called to render UI inorder to show changes*/});
+        if (airQuality > 10) {
+          pollutionLevel++;
+        }
+        if (humidity > 10) {
+          pollutionLevel++;
+        }
+        if (lpg > 10) {
+          pollutionLevel++;
+        }
+        if (noise > 10) {
+          pollutionLevel++;
+        }
+        if (ph > 10) {
+          pollutionLevel++;
+        }
+        if (temperature > 10) {
+          pollutionLevel++;
+        }
+        if (turbidity > 10) {
+          pollutionLevel++;
+        }
+      });
+      print(
+          'line 338 ${pollutionLevel}, data Exists ${dataExists}, $latitude, $longitude');
+      if (!dataExists) {
+        _collapsedBottomSheetColor = Colors.blueGrey;
+      }
+      if (pollutionLevel == 0 && dataExists) {
+        _collapsedBottomSheetColor = Colors.green;
+      }
+      if (pollutionLevel > 0 && pollutionLevel <= 2) {
+        _collapsedBottomSheetColor = Colors.amber;
+      }
+      if (pollutionLevel > 2 && pollutionLevel <= 5) {
+        _collapsedBottomSheetColor = Colors.orange;
+      }
+      if (pollutionLevel > 5) {
+        _collapsedBottomSheetColor = Colors.red;
+      }
+      setState(() {/* This is called to render UI inorder to show changes*/});
     });
   }
 
@@ -381,25 +410,34 @@ class _MyHomePageState extends State<MyHomePage> {
         onSelectNotification: onSelectNotification);
   }
 
-  Future onSelectNotification(String payload) async{
+  Future onSelectNotification(String payload) async {
     //goto (animate Maps camera) to location we got in payload and make selectedLocation to new location.
-    if(payload == null){
+    if (payload == null) {
       print('line 384 localo notification: payload is null');
     }
-      print('line 380 local notification: $payload');
+    print('line 380 local notification: $payload');
   }
 
   void showLocalNotificationToUser(Map<String, dynamic> message) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('High level pollution detected',),
-    action: SnackBarAction(label: 'Move to location', onPressed: (){
-      _gotoLocation(double.tryParse(message['data']['latitude']), double.tryParse(message['data']['longitude']));
-      getLocationDetailsOfCoordinates(double.tryParse(message['data']['latitude']), double.tryParse(message['data']['longitude']));
-      _getLevelOfPollution(double.tryParse(message['data']['latitude']), double.tryParse(message['data']['longitude']));
-    }),));
-  showOngoingNotification(notifications,
-  title: message['notification']['title'], body: message['notification']['body']);
+    //Executes when user received notification when app is in foreground
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(
+        'High level pollution detected',
+      ),
+      action: SnackBarAction(
+          label: 'Move to location',
+          onPressed: () {
+            _gotoLocation(double.tryParse(message['data']['latitude']),
+                double.tryParse(message['data']['longitude']));
+            getLocationDetailsOfCoordinates(
+                double.tryParse(message['data']['latitude']),
+                double.tryParse(message['data']['longitude']));
+            _getLevelOfPollution(double.tryParse(message['data']['latitude']),
+                double.tryParse(message['data']['longitude']));
+          }),
+    ));
+    showOngoingNotification(notifications,
+        title: message['notification']['title'],
+        body: message['notification']['body']);
   }
-
-
-
 }
