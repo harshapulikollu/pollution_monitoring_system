@@ -161,9 +161,11 @@ class _MyHomePageState extends State<MyHomePage> {
       locDocs.documents.forEach((docSnapshot) {
         String locDocIDName = docSnapshot.documentID;
         List<String> locDocIDNameSplit = locDocIDName.split('&');
+
         _addMarkerOnMap(double.tryParse(locDocIDNameSplit[0]),
             double.tryParse(locDocIDNameSplit[1]),
             userLocation: false);
+
       });
     });
   }
@@ -283,6 +285,7 @@ class _MyHomePageState extends State<MyHomePage> {
     LatLng _latLan = LatLng(latitude, latitude);
     //this is as of now once we get the real data we will remove the second one
     //first marker is user's device GPS location
+
     _markers.add(Marker(
       markerId: MarkerId(_latLan.toString()),
       position: LatLng(latitude, longitude),
