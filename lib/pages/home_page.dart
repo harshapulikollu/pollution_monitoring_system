@@ -56,6 +56,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int pollutionLevel = 0;
 
+  //values for floating action button
+  final double _initFabHeight = 120.0;
+  double _fabHeight;
+  double _panelHeightOpen = 500.0;
+  double _panelHeightClosed = 100.0;
+
   void _onMapCreated(GoogleMapController controller) {
     //This method is called upon map created
     _mapController.complete(controller);
@@ -74,6 +80,8 @@ class _MyHomePageState extends State<MyHomePage> {
               topLeft: Radius.circular(24.0),
               topRight: Radius.circular(24.0),
             ),
+            parallaxEnabled: true,
+            parallaxOffset: .5,
             body: GoogleMap(
                 onMapCreated: _onMapCreated,
                 mapType: _currentMapType,
@@ -85,6 +93,9 @@ class _MyHomePageState extends State<MyHomePage> {
             panel: _getFullDetailsSheet(context),
             collapsed: _getCollapsedDetailsSheet(context),
             controller: _bottomSheetController,
+            onPanelSlide: (double pos) => setState((){
+              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) + _initFabHeight;
+            }),
           ),
           Padding(
             padding: EdgeInsets.only(right: 15.0, top: 40.0),
@@ -104,19 +115,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     }));
                   },
                 )),
-          )
+          ),
+          Positioned(
+            right: 20.0,
+            bottom: _fabHeight,
+            child:FloatingActionButton(
+              onPressed: () {
+                //This will change map type to normal or satellite depending on what's showing to user.
+                setState(() {
+                  _currentMapType = _currentMapType == MapType.normal
+                      ? MapType.satellite
+                      : MapType.normal;
+                });
+              },
+              child: Icon(Icons.layers),
+              tooltip: 'Change Map view',
+            ),
+          ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //This will change map type to normal or satellite depending on what's showing to user.
-          setState(() {
-            _currentMapType = _currentMapType == MapType.normal
-                ? MapType.satellite
-                : MapType.normal;
-          });
-        },
-        child: Icon(Icons.layers),
       ),
     );
   }
@@ -133,6 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void initPlatformState() async {
     //This method will call the getUserLocation method from Utils and gets the latitude and longitude also with geooder data(address)
+    _fabHeight = _initFabHeight;
     List userLocationData = await getUserLocation();
     double latitude = userLocationData[0];
     double longitude = userLocationData[1];
@@ -147,8 +164,8 @@ class _MyHomePageState extends State<MyHomePage> {
       selectedMarketLongitude = longitude;
       selectedLocationAddress = userLocationData[2];
     });
-    _gotoLocation(userLatitude, userLongitude);
     _addMarkerOnMap(latitude, longitude, userLocation: true);
+    _gotoLocation(userLatitude, userLongitude);
     //calling below method to show the pollution of user's device location w/o needing to tap on it.
     _getLevelOfPollution(latitude, longitude);
   }
@@ -179,7 +196,17 @@ class _MyHomePageState extends State<MyHomePage> {
             onTap: () {
               _bottomSheetController.close();
             },
-            child: Icon(Icons.keyboard_arrow_down),
+            child: Padding(
+              padding: EdgeInsets.only(top: 10.0),
+              child: Container(
+                alignment: Alignment.center,
+                width: 30,
+                height: 5,
+                decoration: BoxDecoration(
+                    color: Colors.grey[500],
+                    borderRadius: BorderRadius.all(Radius.circular(12.0))
+                ),
+              ),),
           ),
           GestureDetector(
             onVerticalDragEnd: (details){
@@ -216,16 +243,23 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        //crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           GestureDetector(
             onTap: () {
               _bottomSheetController.open();
             },
-            child: Icon(
-              Icons.maximize,
-              color: Colors.white,
-            ),
+            child: Padding(
+              padding: EdgeInsets.only(top: 10.0),
+            child: Container(
+              alignment: Alignment.center,
+              width: 30,
+              height: 5,
+              decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.all(Radius.circular(12.0))
+              ),
+            ),)
           ),
           ListTile(
               title: selectedLocationAddress == null
