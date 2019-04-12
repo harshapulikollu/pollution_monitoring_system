@@ -21,6 +21,25 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
   List<double> temperature = [];
   List<double> turbidity = [];
 
+  static final List<String> chartDropdownItems = [ 'All','Air quality', 'Humidity', 'LPG', 'Noise','pH level','Temperature','Turbidity' ];
+  String actualDropdown = chartDropdownItems[0];
+
+  double airQualityThreshold = 5.0;
+  double humidityThreshold = 5.0;
+  double lpgThreshold = 5.0;
+  double noiseThreshold = 5.0;
+  double phThreshold = 5.0;
+  double temperatureThreshold = 5.0;
+  double turbidityThreshold = 5.0;
+
+  MaterialColor airQualityColor = Colors.blue;
+  MaterialColor humidityColor = Colors.green;
+  MaterialColor lpgColor = Colors.purple;
+  MaterialColor noiseColor = Colors.red;
+  MaterialColor phColor = Colors.cyan;
+  MaterialColor temperatureColor = Colors.orange;
+  MaterialColor turbidityColor = Colors.brown;
+
   @override
   Widget build(BuildContext context) {
     print(
@@ -85,18 +104,16 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
     timestamp.clear();
     turbidity.clear();
     documents.forEach((docSnapshot) {
-      airQuality
-          .add(double.tryParse(docSnapshot.data['airQuality'].toString()));
+      airQuality.add(double.tryParse(docSnapshot.data['airQuality'].toString()));
       humidity.add(double.tryParse(docSnapshot.data['humidity'].toString()));
       lpg.add(double.tryParse(docSnapshot.data['lpg'].toString()));
       noise.add(double.tryParse(docSnapshot.data['noise'].toString()));
       ph.add(double.tryParse(docSnapshot.data['ph'].toString()));
-      temperature
-          .add(double.tryParse(docSnapshot.data['temperature'].toString()));
+      temperature.add(double.tryParse(docSnapshot.data['temperature'].toString()));
       timestamp.add(docSnapshot.data['timestamp']);
       turbidity.add(double.tryParse(docSnapshot.data['turbidity'].toString()));
     });
-
+    print('line 100 ${humidity.length}');
     return SingleChildScrollView(
         padding: EdgeInsets.all(8.0),
         child: Column(
@@ -104,34 +121,94 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
             Card(
                 child: Column(
               children: <Widget>[
-                Stack(
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    Sparkline(
-                      data: temperature,
-                      lineColor: Colors.orange,
-                    ),
-                    Sparkline(
-                      data: airQuality,
-                      lineColor: Colors.blue,
-                    ),
-                    Sparkline(
-                      data: humidity,
-                      lineColor: Colors.green,
-                    ),
-                    Sparkline(
-                      data: turbidity,
-                      lineColor: Colors.black,
-                    ),
-                    Sparkline(
-                      data: ph,
-                      lineColor: Colors.yellow,
-                    ),
-                    Sparkline(
-                      data: noise,
-                      lineColor: Colors.pink,
+                    DropdownButton
+                      (
+                        isDense: true,
+                        value: actualDropdown,
+                        onChanged: (String value) => setState(()
+                        {
+                          actualDropdown = value;
+                          //actualChart = chartDropdownItems.indexOf(value); // Refresh the chart
+                        }),
+                        items: chartDropdownItems.map((String title)
+                        {
+                          return DropdownMenuItem
+                            (
+                            value: title,
+                            child: Text(title, style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w400, fontSize: 14.0)),
+                          );
+                        }).toList()
                     ),
                   ],
                 ),
+                actualDropdown == 'All' ? Stack(
+                  children: <Widget>[
+                    Sparkline(
+                      data: temperature,
+                      pointsMode: PointsMode.aboveThreshold,
+                      pointColor: temperatureColor,
+                      pointSize: 10.0,
+                      threshold: temperatureThreshold,//TODO: change threshold values corresponding to the sensor.
+                      lineColor: temperatureColor,
+                    ),
+                    Sparkline(
+                      data: airQuality,
+                      pointsMode: PointsMode.aboveThreshold,
+                      pointColor: airQualityColor,
+                      pointSize: 10.0,
+                      threshold: airQualityThreshold,//TODO: change threshold values corresponding to the sensor.
+                      lineColor: airQualityColor,
+                    ),
+                    Sparkline(
+                      data: humidity,
+                      pointsMode: PointsMode.aboveThreshold,
+                      pointColor: humidityColor,
+                      pointSize: 10.0,
+                      threshold: humidityThreshold,//TODO: change threshold values corresponding to the sensor.
+                      lineColor: humidityColor,
+                    ),
+                    Sparkline(
+                      data: turbidity,
+                      pointsMode: PointsMode.aboveThreshold,
+                      pointColor: turbidityColor,
+                      pointSize: 10.0,
+                      threshold: turbidityThreshold,//TODO: change threshold values corresponding to the sensor.
+                      lineColor: turbidityColor,
+                    ),
+                    Sparkline(
+                      data: ph,
+                      pointsMode: PointsMode.aboveThreshold,
+                      pointColor: phColor,
+                      pointSize: 10.0,
+                      threshold: phThreshold,//TODO: change threshold values corresponding to the sensor.
+                      lineColor: phColor,
+                    ),
+                    Sparkline(
+                      data: noise,
+                      pointsMode: PointsMode.aboveThreshold,
+                      pointColor: noiseColor,
+                      pointSize: 10.0,
+                      threshold: noiseThreshold,//TODO: change threshold values corresponding to the sensor.
+                      lineColor: noiseColor,
+                    ),
+                    Sparkline(
+                      data: lpg,
+                    pointsMode: PointsMode.aboveThreshold,
+                    pointColor: lpgColor,
+                    pointSize: 10.0,
+                    threshold: lpgThreshold,
+                    lineColor: lpgColor,)
+                  ],
+                ) : Sparkline(
+                    data: getSelectedDropDownData(),
+                pointsMode: PointsMode.aboveThreshold,
+                pointColor: getSelectedDropDownLineColor(),
+                pointSize: 10.0,
+                threshold: getSelectedDropDownThreshold(),
+                lineColor: getSelectedDropDownLineColor(),),
                Container(
                  padding: EdgeInsets.all(10.0),
                  child: Wrap(
@@ -141,37 +218,43 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                      Text(
                        'AirQualiy',
                        style: TextStyle(
-                         color: Colors.blue,
+                         color: airQualityColor,
                        ),
                      ),
                      Text(
                        'Temperature',
                        style: TextStyle(
-                         color: Colors.orange,
+                         color: temperatureColor,
                        ),
                      ),
                      Text(
                        'Humidity',
                        style: TextStyle(
-                         color: Colors.green,
+                         color: humidityColor,
                        ),
                      ),
                      Text(
                        'Noise',
                        style: TextStyle(
-                         color: Colors.pink,
+                         color: noiseColor,
                        ),
                      ),
                      Text(
                        'pH level',
                        style: TextStyle(
-                         color: Colors.yellow,
+                         color: phColor,
                        ),
                      ),
                      Text(
                        'Turbidity',
                        style: TextStyle(
-                         color: Colors.black,
+                         color: turbidityColor,
+                       ),
+                     ),
+                     Text(
+                       'LPG',
+                       style: TextStyle(
+                         color: lpgColor,
                        ),
                      ),
                    ],
@@ -334,5 +417,38 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                     .toList()),
           ],
         ));
+  }
+
+  getSelectedDropDownData() {
+    print('line 389 $actualDropdown, ${humidity.length}');
+    return actualDropdown == 'Air quality' ? airQuality
+        : actualDropdown == 'Humidity' ? humidity
+        :actualDropdown == 'LPG' ? lpg
+        :actualDropdown == 'Noise' ? noise
+        :actualDropdown == 'pH level' ? ph
+        :actualDropdown == 'Temperature' ? temperature
+        :turbidity;
+
+  }
+
+  getSelectedDropDownThreshold() {
+    return actualDropdown == 'Air quality' ? airQualityThreshold
+        : actualDropdown == 'Humidity' ? humidityThreshold
+        :actualDropdown == 'LPG' ? lpgThreshold
+        :actualDropdown == 'Noise' ? noiseThreshold
+        :actualDropdown == 'pH level' ? phThreshold
+        :actualDropdown == 'Temperature' ? temperatureThreshold
+        :turbidityThreshold;
+
+  }
+
+  getSelectedDropDownLineColor() {
+    return actualDropdown == 'Air quality' ? airQualityColor
+        : actualDropdown == 'Humidity' ? humidityColor
+        :actualDropdown == 'LPG' ? lpgColor
+        :actualDropdown == 'Noise' ? noiseColor
+        :actualDropdown == 'pH level' ? phColor
+        :actualDropdown == 'Temperature' ? temperatureColor
+        :turbidityColor;
   }
 }

@@ -139,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    //This is the first method which invokes every time when this class is called.
+    //This is the first method which invokes for the first time when this class is called.
     super.initState();
     initPlatformState();
     getMarkersFromDB();
@@ -175,10 +175,11 @@ class _MyHomePageState extends State<MyHomePage> {
         .collection('locationMarkers')
         .snapshots()
         .listen((locDocs) {
+          print('line 178 ${locDocs.documents.length}');
       locDocs.documents.forEach((docSnapshot) {
         String locDocIDName = docSnapshot.documentID;
         List<String> locDocIDNameSplit = locDocIDName.split('&');
-
+          print('line 182 ${locDocIDNameSplit[0]}, ${locDocIDNameSplit[1]}');
         _addMarkerOnMap(double.tryParse(locDocIDNameSplit[0]),
             double.tryParse(locDocIDNameSplit[1]),
             userLocation: false);
@@ -223,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           LocPollutionDetails(selectedMarkerLatitude.toString(),
               selectedMarketLongitude.toString()),
-          //TODO: show all the data related to this location.
+
         ],
       ),
     );
@@ -324,11 +325,8 @@ class _MyHomePageState extends State<MyHomePage> {
     LatLng _latLan = LatLng(latitude, latitude);
     //this is as of now once we get the real data we will remove the second one
     //first marker is user's device GPS location
-    if(userLocation){
-
-    }
     _markers.add(Marker(
-      markerId: MarkerId(_latLan.toString()),
+      markerId: MarkerId(latitude.toString()+'&'+longitude.toString()),
       position: LatLng(latitude, longitude),
       onTap: () {
         getLocationDetailsOfCoordinates(latitude, longitude);
