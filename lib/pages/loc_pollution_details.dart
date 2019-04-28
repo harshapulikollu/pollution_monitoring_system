@@ -16,27 +16,27 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
   List<double> humidity = [];
   List<double> lpg = [];
   List<double> noise = [];
-  List<double> ph = [];
   List<String> timestamp = [];
   List<double> temperature = [];
   List<double> turbidity = [];
 
-  static final List<String> chartDropdownItems = [ 'All','Air quality', 'Humidity', 'LPG', 'Noise','pH level','Temperature','Turbidity' ];
+  //values for dorp down in graph
+  static final List<String> chartDropdownItems = [ 'All','Air quality', 'Humidity', 'LPG', 'Noise','Temperature','Turbidity' ];
+  static final List<String> chartTimelineDropdownItems = ['All', 'Last 1 hour', 'Last 24 hours', 'Last 7 days', 'Last 30 days'];
   String actualDropdown = chartDropdownItems[0];
+  String actualTimelineDropdown = chartTimelineDropdownItems[0];
 
-  double airQualityThreshold = 5.0;
-  double humidityThreshold = 5.0;
-  double lpgThreshold = 5.0;
-  double noiseThreshold = 5.0;
-  double phThreshold = 5.0;
-  double temperatureThreshold = 5.0;
-  double turbidityThreshold = 5.0;
+  double airQualityThreshold = 101.0;//TODO: change threshold values corresponding to the sensor.
+  double humidityThreshold = 5.0;//TODO: change threshold values corresponding to the sensor.
+  double lpgThreshold = 5.0;//TODO: change threshold values corresponding to the sensor.
+  double noiseThreshold = 5.0;//TODO: change threshold values corresponding to the sensor.
+  double temperatureThreshold = 40.0;//TODO: change threshold values corresponding to the sensor.
+  double turbidityThreshold = 5.0;//TODO: change threshold values corresponding to the sensor.
 
   MaterialColor airQualityColor = Colors.blue;
   MaterialColor humidityColor = Colors.green;
   MaterialColor lpgColor = Colors.purple;
   MaterialColor noiseColor = Colors.red;
-  MaterialColor phColor = Colors.cyan;
   MaterialColor temperatureColor = Colors.orange;
   MaterialColor turbidityColor = Colors.brown;
 
@@ -99,7 +99,6 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
     humidity.clear();
     lpg.clear();
     noise.clear();
-    ph.clear();
     temperature.clear();
     timestamp.clear();
     turbidity.clear();
@@ -108,12 +107,11 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
       humidity.add(double.tryParse(docSnapshot.data['humidity'].toString()));
       lpg.add(double.tryParse(docSnapshot.data['lpg'].toString()));
       noise.add(double.tryParse(docSnapshot.data['noise'].toString()));
-      ph.add(double.tryParse(docSnapshot.data['ph'].toString()));
       temperature.add(double.tryParse(docSnapshot.data['temperature'].toString()));
       timestamp.add(docSnapshot.data['timestamp']);
       turbidity.add(double.tryParse(docSnapshot.data['turbidity'].toString()));
     });
-    print('line 100 ${humidity.length}');
+
     return SingleChildScrollView(
         padding: EdgeInsets.all(8.0),
         child: Column(
@@ -122,7 +120,7 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                 child: Column(
               children: <Widget>[
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     DropdownButton
                       (
@@ -142,60 +140,69 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                           );
                         }).toList()
                     ),
+//                    DropdownButton
+//                      (
+//                        isDense: true,
+//                        value: actualTimelineDropdown,
+//                        onChanged: (String value) => setState(()
+//                        {
+//                          actualTimelineDropdown = value;
+//                        }),
+//                        items: chartTimelineDropdownItems.map((String title)
+//                        {
+//                          return DropdownMenuItem
+//                            (
+//                            value: title,
+//                            child: Text(title, style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w400, fontSize: 14.0)),
+//                          );
+//                        }).toList()
+//                    ),
                   ],
                 ),
                 actualDropdown == 'All' ? Stack(
                   children: <Widget>[
                     Sparkline(
-                      data: temperature,
+                      data: temperature,//TODO: show data depending on Timeline dropDown
                       pointsMode: PointsMode.aboveThreshold,
                       pointColor: temperatureColor,
                       pointSize: 10.0,
-                      threshold: temperatureThreshold,//TODO: change threshold values corresponding to the sensor.
+                      threshold: temperatureThreshold,
                       lineColor: temperatureColor,
                     ),
                     Sparkline(
-                      data: airQuality,
+                      data: airQuality,//TODO: show data depending on Timeline dropDown
                       pointsMode: PointsMode.aboveThreshold,
                       pointColor: airQualityColor,
                       pointSize: 10.0,
-                      threshold: airQualityThreshold,//TODO: change threshold values corresponding to the sensor.
+                      threshold: airQualityThreshold,
                       lineColor: airQualityColor,
                     ),
                     Sparkline(
-                      data: humidity,
+                      data: humidity,//TODO: show data depending on Timeline dropDown
                       pointsMode: PointsMode.aboveThreshold,
                       pointColor: humidityColor,
                       pointSize: 10.0,
-                      threshold: humidityThreshold,//TODO: change threshold values corresponding to the sensor.
+                      threshold: humidityThreshold,
                       lineColor: humidityColor,
                     ),
                     Sparkline(
-                      data: turbidity,
+                      data: turbidity,//TODO: show data depending on Timeline dropDown
                       pointsMode: PointsMode.aboveThreshold,
                       pointColor: turbidityColor,
                       pointSize: 10.0,
-                      threshold: turbidityThreshold,//TODO: change threshold values corresponding to the sensor.
+                      threshold: turbidityThreshold,
                       lineColor: turbidityColor,
                     ),
                     Sparkline(
-                      data: ph,
-                      pointsMode: PointsMode.aboveThreshold,
-                      pointColor: phColor,
-                      pointSize: 10.0,
-                      threshold: phThreshold,//TODO: change threshold values corresponding to the sensor.
-                      lineColor: phColor,
-                    ),
-                    Sparkline(
-                      data: noise,
+                      data: noise,//TODO: show data depending on Timeline dropDown
                       pointsMode: PointsMode.aboveThreshold,
                       pointColor: noiseColor,
                       pointSize: 10.0,
-                      threshold: noiseThreshold,//TODO: change threshold values corresponding to the sensor.
+                      threshold: noiseThreshold,
                       lineColor: noiseColor,
                     ),
                     Sparkline(
-                      data: lpg,
+                      data: lpg,//TODO: show data depending on Timeline dropDown
                     pointsMode: PointsMode.aboveThreshold,
                     pointColor: lpgColor,
                     pointSize: 10.0,
@@ -203,65 +210,59 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                     lineColor: lpgColor,)
                   ],
                 ) : Sparkline(
-                    data: getSelectedDropDownData(),
+                    data: getSelectedDropDownData(),//TODO: show data depending on Timeline dropDown
                 pointsMode: PointsMode.aboveThreshold,
                 pointColor: getSelectedDropDownLineColor(),
                 pointSize: 10.0,
                 threshold: getSelectedDropDownThreshold(),
                 lineColor: getSelectedDropDownLineColor(),),
-               Container(
-                 padding: EdgeInsets.all(10.0),
-                 child: Wrap(
-                   spacing: 10.0,
-                   crossAxisAlignment: WrapCrossAlignment.center,
-                   children: <Widget>[
-                     Text(
-                       'AirQualiy',
-                       style: TextStyle(
-                         color: airQualityColor,
-                       ),
-                     ),
-                     Text(
-                       'Temperature',
-                       style: TextStyle(
-                         color: temperatureColor,
-                       ),
-                     ),
-                     Text(
-                       'Humidity',
-                       style: TextStyle(
-                         color: humidityColor,
-                       ),
-                     ),
-                     Text(
-                       'Noise',
-                       style: TextStyle(
-                         color: noiseColor,
-                       ),
-                     ),
-                     Text(
-                       'pH level',
-                       style: TextStyle(
-                         color: phColor,
-                       ),
-                     ),
-                     Text(
-                       'Turbidity',
-                       style: TextStyle(
-                         color: turbidityColor,
-                       ),
-                     ),
-                     Text(
-                       'LPG',
-                       style: TextStyle(
-                         color: lpgColor,
-                       ),
-                     ),
-                   ],
-                 )
-               )
               ],
-            )),
+            )
+            ),
+            Container(
+              child: Wrap(
+                spacing: 10.0,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'AirQualiy',
+                    style: TextStyle(
+                      color: airQualityColor,
+                    ),
+                  ),
+                  Text(
+                    'Temperature',
+                    style: TextStyle(
+                      color: temperatureColor,
+                    ),
+                  ),
+                  Text(
+                    'Humidity',
+                    style: TextStyle(
+                      color: humidityColor,
+                    ),
+                  ),
+                  Text(
+                    'Noise',
+                    style: TextStyle(
+                      color: noiseColor,
+                    ),
+                  ),
+                  Text(
+                    'Turbidity',
+                    style: TextStyle(
+                      color: turbidityColor,
+                    ),
+                  ),
+                  Text(
+                    'LPG',
+                    style: TextStyle(
+                      color: lpgColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             ExpansionTile(
               title: Text('Air quality'),
               children: airQuality
@@ -271,10 +272,10 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                           index,
                           ListTile(
                             title: Text('Air quality is:'),
-                            trailing: Text(data.toString()),
+                            trailing: Text(data.toString(),style: TextStyle(fontSize: 25.0,
+                                color: data> 101 ? Colors.red : Colors.green),),
                             subtitle: Text(DateTime.fromMillisecondsSinceEpoch(
-                                    int.tryParse(timestamp[index].toString()) *
-                                        1000)
+                                    int.tryParse(timestamp[index].toString()))
                                 .toUtc()
                                 .toString()),
                           ),
@@ -292,12 +293,12 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                             index,
                             ListTile(
                               title: Text('Temperature is:'),
-                              trailing: Text(data.toString()),
+                              trailing: Text(data.toString(),style: TextStyle(fontSize: 25.0,
+                              color: data> 40 ? Colors.red : Colors.green),),
                               subtitle: Text(
                                   DateTime.fromMillisecondsSinceEpoch(
                                           int.tryParse(
-                                                  timestamp[index].toString()) *
-                                              1000)
+                                                  timestamp[index].toString()) )
                                       .toUtc()
                                       .toString()),
                             ),
@@ -314,12 +315,12 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                             index,
                             ListTile(
                               title: Text('Humidity is:'),
-                              trailing: Text(data.toString()),
+                              trailing: Text(data.toString(), style: TextStyle(fontSize: 25.0,
+                                  color: data> 10 ? Colors.red : Colors.green),),
                               subtitle: Text(
                                   DateTime.fromMillisecondsSinceEpoch(
                                           int.tryParse(
-                                                  timestamp[index].toString()) *
-                                              1000)
+                                                  timestamp[index].toString()))
                                       .toUtc()
                                       .toString()),
                             ),
@@ -328,20 +329,20 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                     .values
                     .toList()),
             ExpansionTile(
-                title: Text('Noise'),
+                title: Text('Sound'),
                 children: noise
                     .asMap()
                     .map(
                       (index, data) => MapEntry(
                             index,
                             ListTile(
-                              title: Text('Noise is:'),
-                              trailing: Text(data.toString()),
+                              title: Text('Sound is:'),
+                              trailing: Text(data.toString(),style: TextStyle(fontSize: 25.0,
+                                  color: data> 20 ? Colors.red : Colors.green),),
                               subtitle: Text(
                                   DateTime.fromMillisecondsSinceEpoch(
                                           int.tryParse(
-                                                  timestamp[index].toString()) *
-                                              1000)
+                                                  timestamp[index].toString()) )
                                       .toUtc()
                                       .toString()),
                             ),
@@ -358,34 +359,12 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                             index,
                             ListTile(
                               title: Text('LPG is:'),
-                              trailing: Text(data.toString()),
+                              trailing: Text(data.toString(),style: TextStyle(fontSize: 25.0,
+                                  color: data> 45 ? Colors.red : Colors.green),),
                               subtitle: Text(
                                   DateTime.fromMillisecondsSinceEpoch(
                                           int.tryParse(
-                                                  timestamp[index].toString()) *
-                                              1000)
-                                      .toUtc()
-                                      .toString()),
-                            ),
-                          ),
-                    )
-                    .values
-                    .toList()),
-            ExpansionTile(
-                title: Text('pH level'),
-                children: ph
-                    .asMap()
-                    .map(
-                      (index, data) => MapEntry(
-                            index,
-                            ListTile(
-                              title: Text('pH level is:'),
-                              trailing: Text(data.toString()),
-                              subtitle: Text(
-                                  DateTime.fromMillisecondsSinceEpoch(
-                                          int.tryParse(
-                                                  timestamp[index].toString()) *
-                                              1000)
+                                                  timestamp[index].toString()) )
                                       .toUtc()
                                       .toString()),
                             ),
@@ -402,12 +381,12 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                             index,
                             ListTile(
                               title: Text('Turbidity:'),
-                              trailing: Text(data.toString()),
+                              trailing: Text(data.toString(),style: TextStyle(fontSize: 25.0,
+                                  color: data> 40 ? Colors.red : Colors.green),),
                               subtitle: Text(
                                   DateTime.fromMillisecondsSinceEpoch(
                                           int.tryParse(
-                                                  timestamp[index].toString()) *
-                                              1000)
+                                                  timestamp[index].toString()) )
                                       .toUtc()
                                       .toString()),
                             ),
@@ -425,7 +404,6 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
         : actualDropdown == 'Humidity' ? humidity
         :actualDropdown == 'LPG' ? lpg
         :actualDropdown == 'Noise' ? noise
-        :actualDropdown == 'pH level' ? ph
         :actualDropdown == 'Temperature' ? temperature
         :turbidity;
 
@@ -436,7 +414,6 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
         : actualDropdown == 'Humidity' ? humidityThreshold
         :actualDropdown == 'LPG' ? lpgThreshold
         :actualDropdown == 'Noise' ? noiseThreshold
-        :actualDropdown == 'pH level' ? phThreshold
         :actualDropdown == 'Temperature' ? temperatureThreshold
         :turbidityThreshold;
 
@@ -447,7 +424,6 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
         : actualDropdown == 'Humidity' ? humidityColor
         :actualDropdown == 'LPG' ? lpgColor
         :actualDropdown == 'Noise' ? noiseColor
-        :actualDropdown == 'pH level' ? phColor
         :actualDropdown == 'Temperature' ? temperatureColor
         :turbidityColor;
   }

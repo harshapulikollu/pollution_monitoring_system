@@ -393,11 +393,10 @@ class _MyHomePageState extends State<MyHomePage> {
         int humidity = docSnapshot.data['humidity'];
         int lpg = docSnapshot.data['lpg'];
         int noise = docSnapshot.data['noise'];
-        int ph = docSnapshot.data['ph'];
         int temperature = docSnapshot.data['temperature'];
         int turbidity = docSnapshot.data['turbidity'];
 
-        if (airQuality > 10) {
+        if (airQuality > 101) {
           pollutionLevel++;
         }
         if (humidity > 10) {
@@ -409,10 +408,7 @@ class _MyHomePageState extends State<MyHomePage> {
         if (noise > 10) {
           pollutionLevel++;
         }
-        if (ph > 10) {
-          pollutionLevel++;
-        }
-        if (temperature > 10) {
+        if (temperature > 40) {
           pollutionLevel++;
         }
         if (turbidity > 10) {
