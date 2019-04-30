@@ -276,7 +276,7 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                                 color: data> 101 ? Colors.red : Colors.green),),
                             subtitle: Text(DateTime.fromMillisecondsSinceEpoch(
                                     int.tryParse(timestamp[index].toString()))
-                                .toUtc()
+                                .toLocal()
                                 .toString()),
                           ),
                         ),
@@ -299,7 +299,7 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                                   DateTime.fromMillisecondsSinceEpoch(
                                           int.tryParse(
                                                   timestamp[index].toString()) )
-                                      .toUtc()
+                                      .toLocal()
                                       .toString()),
                             ),
                           ),
@@ -321,7 +321,7 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                                   DateTime.fromMillisecondsSinceEpoch(
                                           int.tryParse(
                                                   timestamp[index].toString()))
-                                      .toUtc()
+                                      .toLocal()
                                       .toString()),
                             ),
                           ),
@@ -342,8 +342,8 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                               subtitle: Text(
                                   DateTime.fromMillisecondsSinceEpoch(
                                           int.tryParse(
-                                                  timestamp[index].toString()) )
-                                      .toUtc()
+                                                  timestamp[index].toString()) ).toLocal()
+
                                       .toString()),
                             ),
                           ),
@@ -365,7 +365,7 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                                   DateTime.fromMillisecondsSinceEpoch(
                                           int.tryParse(
                                                   timestamp[index].toString()) )
-                                      .toUtc()
+                                      .toLocal()
                                       .toString()),
                             ),
                           ),
@@ -387,7 +387,7 @@ class _LocPollutionDetailsState extends State<LocPollutionDetails> {
                                   DateTime.fromMillisecondsSinceEpoch(
                                           int.tryParse(
                                                   timestamp[index].toString()) )
-                                      .toUtc()
+                                      .toLocal()
                                       .toString()),
                             ),
                           ),

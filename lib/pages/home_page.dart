@@ -389,12 +389,12 @@ class _MyHomePageState extends State<MyHomePage> {
       pollutionLevel = 0;
       querySnapshots.documents.forEach((docSnapshot) {
         dataExists = true;
-        int airQuality = docSnapshot.data['airQuality'];
-        int humidity = docSnapshot.data['humidity'];
-        int lpg = docSnapshot.data['lpg'];
-        int noise = docSnapshot.data['noise'];
-        int temperature = docSnapshot.data['temperature'];
-        int turbidity = docSnapshot.data['turbidity'];
+        double airQuality = docSnapshot.data['airQuality'].toDouble();
+        double humidity = docSnapshot.data['humidity'].toDouble();
+        double lpg = docSnapshot.data['lpg'].toDouble();
+        double noise = docSnapshot.data['noise'].toDouble();
+        double temperature = docSnapshot.data['temperature'].toDouble();
+        double turbidity = docSnapshot.data['turbidity'].toDouble();
 
         if (airQuality > 101) {
           pollutionLevel++;

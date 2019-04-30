@@ -79,9 +79,9 @@ var db = admin.firestore();
 //firebase real time database
 exports.transferData = functions.database.ref('/{newSensorData}').onWrite((snapshot, cpntext) => {
     console.log('rtdb data created and triggerd');
-    const timestamp = Date.now() + 19800;
-    const latitude = parseFloat("31.2556352");
-    const longitude = parseFloat("75.6973493");
+    const timestamp = Date.now();
+    const latitude = parseFloat("31.2515151");
+    const longitude = parseFloat("75.7046727");
     const humidity = parseFloat(snapshot.after.val().Humidity);
     const noise = parseFloat(snapshot.after.val().Sound);
     const temperature = parseFloat(snapshot.after.val().Temperature);
@@ -105,7 +105,8 @@ exports.transferData = functions.database.ref('/{newSensorData}').onWrite((snaps
 console.log('total data gathered and made into JSON '+data);
 
     //writing into firestore
-console.log('timestamp is:'+timestamp);
+	console.log('lat is: '+ latitude + 'lng is '+ longitude);
+	console.log('timestamp is:'+timestamp);
 console.log('airQuality is:'+ airQuality);
 console.log('lpg is:'+lpg);
 console.log('turbidity is:'+ turbidity);
