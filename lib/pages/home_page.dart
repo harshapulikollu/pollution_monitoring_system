@@ -168,6 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _gotoLocation(userLatitude, userLongitude);
     //calling below method to show the pollution of user's device location w/o needing to tap on it.
     _getLevelOfPollution(latitude, longitude);
+    //TODO: add latest location details to shared preferences such that if we can't get the location, then we can show the old location
   }
 
   void getMarkersFromDB() async {

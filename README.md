@@ -13,10 +13,7 @@ A new Flutter application for [Lovely Professional University](https://www.lpu.i
 - [X] ~~Floating button to change b/w views.~~
 - [X] ~~Add firebase json file to app for interacting with Database and sending notifications.~~
 - [X] ~~Get data from database as stream for particular marker(location)~~
-- [X] ~~Local Notifications for alerts when app is opened.~~
-- [ ] Send location details in notifications as data in payload.
-- [ ] Get the location details from payload and animate camera to that location. 
+- [X] ~~Local Notifications for alerts when app is opened.~~ 
 - [X] ~~Add(code) cloud functions to trigger notification alerts to user when any parameter level reaches threshold.~~
 - [X] ~~Show real-time graph of data(if feasible)~~
 - [X] ~~Add info/about screen.~~
-- [ ] Change the threshold values of sensors in index.js and in collapsed bottom sheet(for color)
